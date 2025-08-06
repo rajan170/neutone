@@ -15,6 +15,8 @@ image = (
 )
 
 image = image.add_local_file("modal_config.py", "/root/modal_config.py").add_local_file("main.py", "/root/main.py")
+image = image.add_local_file("MusicGenServer.py", "/root/MusicGenServer.py")
+
 
 model_volume = modal.Volume.from_name("ace-step-models", create_if_missing=True)
 hf_volume = modal.Volume.from_name("qwen-hf-cache", create_if_missing=True)
