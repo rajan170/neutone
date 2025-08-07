@@ -338,3 +338,9 @@ logs
 # Backup files
 *.bak
 *.backup
+
+# Model
+/ACE-Step
+
+# generated audio files
+*.wav
