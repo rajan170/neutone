@@ -6,6 +6,7 @@ from modal_config import app, image, model_volume, hf_volume, neutone_secrets
 
 from GenerateMusic import GenerateMusicResponse
 from AudioGenBase import GenerateFromDescriptionRequest, GenerateFromCustomLyricsRequest, GenerateDescribedLyricsRequest, GenerateMusicResponseS3
+from prompts import PROMPT_GENERATOR_PROMPT
 
 @app.cls(
     image=image,
@@ -35,7 +36,7 @@ class MusicGenServer:
         )
 
         # Large Language Model
-        model_id = "Qwen/Qwen2.5-7B-Instruct" # use Qwen2 if err
+        model_id = "Qwen/Qwen2.5-7B-Instruct" 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
 
         self.llm_model = AutoModelForCausalLM.from_pretrained(
@@ -83,14 +84,48 @@ class MusicGenServer:
         return GenerateMusicResponse(
             audio_data = audio_b64,
         )
+
+
+    def prompt_qwen(self, question: str) -> str:
+        
+        messages = [
+           
+            {"role": "user", "content": question}
+        ]
+        text = self.tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+        model_inputs = self.tokenizer([text], return_tensors="pt").to(self.llm_model.device)
+
+        generated_ids = self.llm_model.generate(
+            **model_inputs,
+            max_new_tokens=512
+        )
+        generated_ids = [
+            output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+        ]
+
+        response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+
+        return response
+
     
+    def generate_prompt(self, description: str) -> str:
+        full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)
+        
+    
+
     @modal.fastapi_endpoint(method="POST")
     def generate_from_description(self, request: GenerateFromDescriptionRequest) -> GenerateMusicResponseS3:
         pass
 
+
     @modal.fastapi_endpoint(method="POST") 
     def generate_from_lyrics(self, request: GenerateFromCustomLyricsRequest) -> GenerateMusicResponseS3: 
         pass
+
 
     @modal.fastapi_endpoint(method="POST")
     def generate_from_described_lyrics(self, request: GenerateDescribedLyricsRequest) -> GenerateMusicResponseS3:
