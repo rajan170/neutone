@@ -11,7 +11,7 @@ class AudioGenerationBase(BaseModel):
 class GenerateFromDescriptionRequest(AudioGenerationBase):
     full_described_song: str
 
-class GenerateWithCustomLyricsRequest(AudioGenerationBase):
+class GenerateFromCustomLyricsRequest(AudioGenerationBase):
     prompt: str 
     lyrics: str
 

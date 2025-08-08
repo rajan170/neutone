@@ -5,6 +5,7 @@ import modal
 from modal_config import app, image, model_volume, hf_volume, neutone_secrets
 
 from GenerateMusic import GenerateMusicResponse
+from AudioGenBase import GenerateFromDescriptionRequest, GenerateFromCustomLyricsRequest, GenerateDescribedLyricsRequest, GenerateMusicResponseS3
 
 @app.cls(
     image=image,
@@ -82,3 +83,15 @@ class MusicGenServer:
         return GenerateMusicResponse(
             audio_data = audio_b64,
         )
+    
+    @modal.fastapi_endpoint(method="POST")
+    def generate_from_description(self, request: GenerateFromDescriptionRequest) -> GenerateMusicResponseS3:
+        pass
+
+    @modal.fastapi_endpoint(method="POST") 
+    def generate_from_lyrics(self, request: GenerateFromCustomLyricsRequest) -> GenerateMusicResponseS3: 
+        pass
+
+    @modal.fastapi_endpoint(method="POST")
+    def generate_from_described_lyrics(self, request: GenerateDescribedLyricsRequest) -> GenerateMusicResponseS3:
+        pass

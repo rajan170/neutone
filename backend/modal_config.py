@@ -15,6 +15,7 @@ image = (
     .add_local_python_source("MusicGenServer")
     .add_local_python_source("GenerateMusic")
     .add_local_python_source("prompts")
+    .add_local_python_source("AudioGenBase")
 )
 
 model_volume = modal.Volume.from_name("ace-step-models", create_if_missing=True)
