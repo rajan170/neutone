@@ -2,11 +2,12 @@ import base64
 import uuid
 import os
 import modal
+import boto3
 from modal_config import app, image, model_volume, hf_volume, neutone_secrets
 
 from GenerateMusic import GenerateMusicResponse
 from AudioGenBase import GenerateFromDescriptionRequest, GenerateFromCustomLyricsRequest, GenerateDescribedLyricsRequest, GenerateMusicResponseS3
-from prompts import PROMPT_GENERATOR_PROMPT
+from prompts import LYRICS_GENERATOR_PROMPT, PROMPT_GENERATOR_PROMPT
 
 @app.cls(
     image=image,
@@ -114,13 +115,20 @@ class MusicGenServer:
     
     def generate_prompt(self, description: str) -> str:
         full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)
-        
+        return self.prompt_qwen(full_prompt)
+
+    def generate_lyrics(self, description: str) -> str:
+        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description)
+        return self.prompt_qwen(full_prompt)
     
 
     @modal.fastapi_endpoint(method="POST")
     def generate_from_description(self, request: GenerateFromDescriptionRequest) -> GenerateMusicResponseS3:
-        pass
+        prompt = self.generate_prompt(request.full_described_song)
 
+        lyrics = ""
+        if not request.instrumental:
+            lyrics = self.generate_lyrics(request.full_described_song)
 
     @modal.fastapi_endpoint(method="POST") 
     def generate_from_lyrics(self, request: GenerateFromCustomLyricsRequest) -> GenerateMusicResponseS3: 
@@ -130,3 +138,40 @@ class MusicGenServer:
     @modal.fastapi_endpoint(method="POST")
     def generate_from_described_lyrics(self, request: GenerateDescribedLyricsRequest) -> GenerateMusicResponseS3:
         pass
+
+    def generate_and_upload_s3(
+        self,
+        prompt: str,
+        lyrics: str,
+        instrumental: bool,
+        audio_duration: float,
+        infer_step: int,
+        guidance_scale: float,
+        seed: int,
+    ) -> GenerateMusicResponseS3:
+        final_lyrics = "[instrumental]" if instrumental else lyrics
+        print("Generated Lyrics: \n", final_lyrics)
+        print("Prompt: \n", prompt)
+
+        # Upload to S3
+        s3_client = boto3.client("s3")
+        bucket_name = os.environ["S3_BUCKET_NAME"] # Defined in Modal
+
+        output_dir = "/tmp/outputs"
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = os.path.join(output_dir, f"{uuid.uuid4()}.wav")
+
+        self.music_model(
+            prompt = prompt,
+            lyrics = final_lyrics,
+            audio_duration = audio_duration,
+            infer_step = infer_step,
+            guidance_scale = guidance_scale,
+            save_path = output_path,
+        )
+
+        audio_s3_key = f"{uuid.uuid4()}.wav"
+        s3_client.upload_file(output_path, bucket_name, audio_s3_key)
+        os.remove(output_path)
+
+        
