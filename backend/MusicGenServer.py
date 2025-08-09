@@ -86,6 +86,70 @@ class MusicGenServer:
             audio_data = audio_b64,
         )
 
+    def generate_categories(self, description: str) -> list[str]:
+        prompt = f"Based on the following music description, list 3-5 relevant genres or categories as a comma-separated list. For example: Pop, Electronic, Sad, 80s. Description: '{description}'"
+
+        response = self.prompt_qwen(prompt)
+        categories = [cat.strip() for cat in response.split(",") if cat.strip()]
+        return categories
+
+
+    def generate_and_upload_s3(
+        self,
+        prompt: str,
+        lyrics: str,
+        instrumental: bool,
+        audio_duration: float,
+        infer_step: int,
+        guidance_scale: float,
+        seed: int,
+        description_for_categories: str,
+    ) -> GenerateMusicResponseS3:
+        final_lyrics = "[instrumental]" if instrumental else lyrics
+        print("Generated Lyrics: \n", final_lyrics)
+        print("Prompt: \n", prompt)
+
+        # Upload to S3
+        s3_client = boto3.client("s3")
+        bucket_name = os.environ["S3_BUCKET_NAME"] # Defined in Modal
+
+        output_dir = "/tmp/outputs"
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = os.path.join(output_dir, f"{uuid.uuid4()}.wav")
+
+        self.music_model(
+            prompt = prompt,
+            lyrics = final_lyrics,
+            audio_duration = audio_duration,
+            infer_step = infer_step,
+            guidance_scale = guidance_scale,
+            save_path = output_path,
+            manual_seed = str(seed),
+        )
+
+        audio_s3_key = f"{uuid.uuid4()}.wav"
+        s3_client.upload_file(output_path, bucket_name, audio_s3_key)
+        os.remove(output_path)
+
+        # Thumbnail Generation
+        thumbnail_prompt = f"{prompt}, album cover art"
+        image = self.image_pipe(prompt=prompt, num_inference_steps=2, guidance_scale=0.0).images[0]
+        image_output_path = os.path.join(output_dir, f"{uuid.uuid4()}.png")
+        image.save(image_output_path)
+
+        # Upload Thumbnail  to S3
+        image_s3_key = f"{uuid.uuid4()}.png"
+        s3_client.upload_file(image_output_path, bucket_name, image_s3_key)
+        os.remove(image_output_path)
+
+        categories = self.generate_categories(description_for_categories)
+
+        return GenerateMusicResponseS3(
+            s3_key = audio_s3_key,
+            cover_img_s3_key = image_s3_key,
+            categories = categories
+        )
+
 
     def prompt_qwen(self, question: str) -> str:
         
@@ -129,6 +193,13 @@ class MusicGenServer:
         lyrics = ""
         if not request.instrumental:
             lyrics = self.generate_lyrics(request.full_described_song)
+        
+        return self.generate_and_upload_s3(
+            prompt = prompt,
+            lyrics = lyrics,
+            instrumental = request.instrumental,
+            description_for_categories = request.full_described_song,
+        )
 
     @modal.fastapi_endpoint(method="POST") 
     def generate_from_lyrics(self, request: GenerateFromCustomLyricsRequest) -> GenerateMusicResponseS3: 
@@ -139,39 +210,5 @@ class MusicGenServer:
     def generate_from_described_lyrics(self, request: GenerateDescribedLyricsRequest) -> GenerateMusicResponseS3:
         pass
 
-    def generate_and_upload_s3(
-        self,
-        prompt: str,
-        lyrics: str,
-        instrumental: bool,
-        audio_duration: float,
-        infer_step: int,
-        guidance_scale: float,
-        seed: int,
-    ) -> GenerateMusicResponseS3:
-        final_lyrics = "[instrumental]" if instrumental else lyrics
-        print("Generated Lyrics: \n", final_lyrics)
-        print("Prompt: \n", prompt)
+    
 
-        # Upload to S3
-        s3_client = boto3.client("s3")
-        bucket_name = os.environ["S3_BUCKET_NAME"] # Defined in Modal
-
-        output_dir = "/tmp/outputs"
-        os.makedirs(output_dir, exist_ok=True)
-        output_path = os.path.join(output_dir, f"{uuid.uuid4()}.wav")
-
-        self.music_model(
-            prompt = prompt,
-            lyrics = final_lyrics,
-            audio_duration = audio_duration,
-            infer_step = infer_step,
-            guidance_scale = guidance_scale,
-            save_path = output_path,
-        )
-
-        audio_s3_key = f"{uuid.uuid4()}.wav"
-        s3_client.upload_file(output_path, bucket_name, audio_s3_key)
-        os.remove(output_path)
-
-        
