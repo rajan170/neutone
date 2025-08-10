@@ -3,3 +3,4 @@ diffusers
 torch
 pydantic
 boto3
+dotenv

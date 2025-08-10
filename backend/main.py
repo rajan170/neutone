@@ -3,74 +3,47 @@ import os
 import requests
 import base64
 
-from AudioGenBase import GenerateFromCustomLyricsRequest, GenerateFromDescriptionRequest, GenerateMusicResponseS3
+from AudioGenBase import GenerateDescribedLyricsRequest, GenerateFromCustomLyricsRequest, GenerateFromDescriptionRequest, GenerateMusicResponseS3
 from modal_config import app, image, neutone_secrets, model_volume, hf_volume
 from MusicGenServer import MusicGenServer
 from GenerateMusic import GenerateMusicResponse
+from dotenv import load_dotenv
 
-@app.function(image=image, secrets=[neutone_secrets])
-def test_func():
-    print("Hello, World!")
-    print(os.environ["test"])
+
 
 @app.local_entrypoint()
 def main():
+    # load_dotenv()
+
+    # # Header name defaults to Modal's proxy auth header; can be overridden via env
+    # modal_auth_header_name = os.getenv("MODAL_AUTH_HEADER", "Modal-Secret")
+    # modal_secret_value = os.getenv("MODAL_SECRET")
+
+    # if not modal_secret_value:
+    #     raise RuntimeError(
+    #         "Missing MODAL_SECRET environment variable. Set it in your environment or .env file."
+    #     )
+
+
+    
+    headers = {"Modal-Key": "*****************",
+                "Modal-Secret": "*****************"}
+
+
     server = MusicGenServer()
-    endpoint_url = server.generate_from_lyrics.get_web_url()
+    endpoint_url = server.generate_from_described_lyrics.get_web_url()
 
-    request = GenerateFromCustomLyricsRequest(
-        prompt="trap, hiphop",
-        
-        lyrics = """ 
-                        [Verse]
-                I don't care about the view
-                'Cause I exist for me and you
-                I live my whole life in this planter
-                I can't find my car so just call me the
-                Horny gardener
+    
 
-                [Verse 2]
-                Mayflies land on me and tell me they just moved to town
-                Remind me of my cousin Dottie she could put five hundred seeds down
-                Used to have a little guy sit beside me but he died in '22
-                Hmm I think that I was that little guy
-                Whoa Tongue slip it wasn't mutual
-
-                [Chorus]
-                Sticky green time in the flowery bob
-                My top shelf's looking good enough to chew
-                Right now every fly in the town is talking to me and buzzing too
-                Daisy Daisy can you come outside to play or else
-                I'll put a garden stake through you
-
-                [Verse 3]
-                All the buzzers lockin' up their stems and suckin' up their cuticles
-                She breathes my air I got her light I'm like her cute little cubical
-                Some caring soul in my seat might say I'm rotting away it's pitiful
-                But she's the reason I go on and on and every single root'll crawl
-
-                [Chorus]
-                Sticky green time in the flowery bob
-                My top shelf's looking good enough to chew
-                Right now every fly in the town is talking to me and buzzing too
-                Daisy Daisy can you come outside to play or else
-                I'll put a garden stake through you
-                Oh my pot
-                Don't scrape
-                Oh no
-
-                [Verse 4]
-                Ah hah ahhah ahhah oohhh
-                Ah ahhahhahhah oh Hah
-                Ohhh oooh Oooh ohhh
-                Ah hhah Oh
-                        """,
+    request = GenerateDescribedLyricsRequest(
+        prompt="trap, hiphop, gangsta rap, 140BPM",
+        described_lyrics="lyrics about a boy from the hood",
         guidance_scale=15,
     )
 
     payload = request.model_dump()
 
-    response = requests.post(endpoint_url, json=payload)
+    response = requests.post(endpoint_url, json=payload, headers=headers)
     response.raise_for_status()
     result = GenerateMusicResponseS3(**response.json())
 

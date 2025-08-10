@@ -56,7 +56,7 @@ class MusicGenServer:
         )
         self.image_pipe.to("cuda")
     
-    @modal.fastapi_endpoint(method="POST")
+    @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate(self) -> GenerateMusicResponse:
         # Ensure model is available if container was cold-started without enter hook
         if not hasattr(self, "music_model"):
@@ -186,7 +186,7 @@ class MusicGenServer:
         return self.prompt_qwen(full_prompt)
     
 
-    @modal.fastapi_endpoint(method="POST")
+    @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_from_description(self, request: GenerateFromDescriptionRequest) -> GenerateMusicResponseS3:
         prompt = self.generate_prompt(request.full_described_song)
 
@@ -202,7 +202,7 @@ class MusicGenServer:
         )
 
 
-    @modal.fastapi_endpoint(method="POST") 
+    @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True) 
     def generate_from_lyrics(self, request: GenerateFromCustomLyricsRequest) -> GenerateMusicResponseS3: 
         return self.generate_and_upload_s3(
             prompt = request.prompt,
@@ -212,7 +212,7 @@ class MusicGenServer:
         )
 
 
-    @modal.fastapi_endpoint(method="POST")
+    @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_from_described_lyrics(self, request: GenerateDescribedLyricsRequest) -> GenerateMusicResponseS3:
         lyrics = ""
         if not request.instrumental:
