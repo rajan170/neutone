@@ -7,6 +7,7 @@ class AudioGenerationBase(BaseModel):
     seed: int = -1
     guidance_scale: float = 15.0
     infer_step: int = 60
+    instrumental: bool = False
 
 class GenerateFromDescriptionRequest(AudioGenerationBase):
     full_described_song: str
@@ -24,5 +25,5 @@ class GenerateMusicResponseS3(BaseModel):
     cover_img_s3_key: str
     categories: List[str]
 
-class GenerateMusicResposne(BaseModel):
+class GenerateMusicResponse(BaseModel):
     audio_data: str

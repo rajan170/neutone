@@ -124,7 +124,7 @@ class MusicGenServer:
             infer_step = infer_step,
             guidance_scale = guidance_scale,
             save_path = output_path,
-            manual_seed = str(seed),
+            manual_seeds = str(seed),
         )
 
         audio_s3_key = f"{uuid.uuid4()}.wav"
@@ -197,18 +197,33 @@ class MusicGenServer:
         return self.generate_and_upload_s3(
             prompt = prompt,
             lyrics = lyrics,
-            instrumental = request.instrumental,
-            description_for_categories = request.full_described_song,
+            description_for_categories=request.full_described_song,
+            **request.model_dump(exclude={"full_described_song"})
         )
+
 
     @modal.fastapi_endpoint(method="POST") 
     def generate_from_lyrics(self, request: GenerateFromCustomLyricsRequest) -> GenerateMusicResponseS3: 
-        pass
+        return self.generate_and_upload_s3(
+            prompt = request.prompt,
+            lyrics = request.lyrics,
+            description_for_categories=request.prompt,
+            **request.model_dump(exclude={"prompt","lyrics"})
+        )
 
 
     @modal.fastapi_endpoint(method="POST")
     def generate_from_described_lyrics(self, request: GenerateDescribedLyricsRequest) -> GenerateMusicResponseS3:
-        pass
+        lyrics = ""
+        if not request.instrumental:
+            lyrics = self.generate_lyrics(request.described_lyrics)
+        
+        return self.generate_and_upload_s3(
+            prompt = request.prompt,
+            lyrics = lyrics,
+            description_for_categories=request.prompt,
+            **request.model_dump(exclude={"described_lyrics", "prompt"})
+        )
 
     
 
