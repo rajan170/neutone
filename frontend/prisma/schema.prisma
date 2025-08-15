@@ -21,9 +21,39 @@ model User {
     sessions      Session[]
     accounts      Account[]
     credits       Int       @default(100)
+    likes         Like[]
 
     @@unique([email])
     @@map("user")
+}
+
+model Song {
+    id                String  @id @default(cuid())
+    title             String
+    s3key             String?
+    thumbnail_s3_key  String?
+    status            String  @default("queued")
+    instrumental      Boolean @default(false)
+    prompt            String?
+    lyrics            String?
+    fullDescribedSong String?
+    describedLyrics   String?
+    guidanceScale     Float?
+    inferStep         Int?
+    audioDuration     Float?
+    seed              Int?
+    published         Boolean @default(false)
+    listenCount       Int     @default(0)
+    likes             Like[]
+}
+
+model Like {
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
+    song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+    songId String
+
+    @@id([userId, songId])
 }
 
 model Session {
