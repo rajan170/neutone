@@ -22,18 +22,19 @@ model User {
     accounts      Account[]
     credits       Int       @default(100)
     likes         Like[]
+    songs         Song[]
 
     @@unique([email])
     @@map("user")
 }
 
 model Song {
-    id                String  @id @default(cuid())
+    id                String     @id @default(cuid())
     title             String
     s3key             String?
     thumbnail_s3_key  String?
-    status            String  @default("queued")
-    instrumental      Boolean @default(false)
+    status            String     @default("queued")
+    instrumental      Boolean    @default(false)
     prompt            String?
     lyrics            String?
     fullDescribedSong String?
@@ -42,9 +43,16 @@ model Song {
     inferStep         Int?
     audioDuration     Float?
     seed              Int?
-    published         Boolean @default(false)
-    listenCount       Int     @default(0)
+    published         Boolean    @default(false)
+    listenCount       Int        @default(0)
     likes             Like[]
+    categories        Category[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
 }
 
 model Like {
@@ -54,6 +62,12 @@ model Like {
     songId String
 
     @@id([userId, songId])
+}
+
+model Category {
+    id    String @id @default(cuid())
+    name  String @unique
+    songs Song[]
 }
 
 model Session {
