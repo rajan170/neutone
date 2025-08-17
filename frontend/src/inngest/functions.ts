@@ -1,5 +1,5 @@
 import { db } from "~/server/db";
-import { inngest } from "../../../inngest/client";
+import { inngest } from "./client";
 import { z } from "zod";
 import type { PrismaClient } from "@prisma/client";
 import { env } from "~/env";
@@ -10,7 +10,17 @@ const generateSongSchema = z.object({
 })
 
 export const generateSong = inngest.createFunction(
-    { id: "generate-song" },
+    {
+        id: "generate-song",
+        concurrency: { limit: 1, key: "event.data.userId" },
+        onFailure: async ({ event, error }) => {
+            return await db.song.update({
+                where: { id: event?.data?.event?.data?.songId as string },
+                data: { status: "failed" },
+            });
+        },
+    },
+
     { event: "generate-song-event" },
     async ({ event, step }) => {
         const { songId } = generateSongSchema.parse(event.data)
@@ -41,14 +51,14 @@ export const generateSong = inngest.createFunction(
             });
 
             type RequestBody = {
-                guidanceScale?: number;
-                inferStep?: number;
-                audioDuration?: number;
+                guidance_scale?: number;
+                infer_step?: number;
+                audio_duration?: number;
                 seed?: number;
                 prompt?: string;
                 lyrics?: string;
-                fullDescribedSong?: string;
-                describedLyrics?: string;
+                full_described_song?: string;
+                described_lyrics?: string;
                 instrumental?: boolean;
             }
 
@@ -68,13 +78,13 @@ export const generateSong = inngest.createFunction(
             if (song.fullDescribedSong) {
                 endpoint = String(env.GENERATE_FROM_DESCRIPTION_ENDPOINT);
                 body = {
-                    fullDescribedSong: song.fullDescribedSong,
+                    full_described_song: song.fullDescribedSong,
                     ...commonParams,
                 };
             }
             //Custom mode: prompt + described lyrics
             else if (song.lyrics && song.prompt) {
-                endpoint = String(env.GENERATE_FROM_LYRICS_ENDPOINT);
+                endpoint = String(env.GENERATE_FROM_DESCRIBED_LYRICS_ENDPOINT);
                 body = {
                     lyrics: song.lyrics,
                     prompt: song.prompt,
@@ -138,7 +148,7 @@ export const generateSong = inngest.createFunction(
                     }
                 });
 
-                if (responseData && responseData.categories.length > 0) {
+                if (responseData?.categories && responseData.categories.length > 0) {
                     await db.song.update({
                         where: { id: songId },
                         data: {
