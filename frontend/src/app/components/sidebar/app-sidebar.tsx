@@ -1,67 +1,52 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
-
 import {
 Sidebar,
 SidebarContent,
+SidebarFooter,
 SidebarGroup,
 SidebarGroupContent,
 SidebarGroupLabel,
 SidebarMenu,
-SidebarMenuButton,
-SidebarMenuItem,
 } from "~/components/ui/sidebar"
+import SidebarMenuItems from "./sidebar-menu-items"
+import { Credits } from "./credits"
+import { UserButton } from "@daveyplate/better-auth-ui"
+import { User } from "lucide-react"
+import Upgrade from "./upgrade"
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-]
 
-export function AppSidebar() {
+
+export async function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-primary font-black text-3xl mt-7 mb-10 flex flex-col items-center justify-center px-2 tracking-widest uppercase font-inter">
+            <p>
+              Neutone 
+            </p> 
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItems />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <div className="mb-2 flex w-full items-center justify-center text-xs">
+            <Credits />
+        <Upgrade />
+
+        </div>
+        <UserButton variant="outline" 
+        additionalLinks={
+            [
+                {label: "Dashboard", 
+                href: "/customer-portal", 
+                icon:<User/>,
+                },
+                ]}/>
+       </SidebarFooter>
     </Sidebar>
   )
 }

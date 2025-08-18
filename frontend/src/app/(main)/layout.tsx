@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 
-import { Geist } from "next/font/google";
+import { Geist, Inter } from "next/font/google";
 import { Providers } from "../components/providers";
 import { Toaster } from "sonner";
 import {
@@ -13,9 +13,7 @@ import { AppSidebar } from "../components/sidebar/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage, BreadcrumbSeparator
+  BreadcrumbList, 
 } from "~/components/ui/breadcrumb";
 import { Separator } from "~/components/ui/separator";
 import BreadcrumbPageClient from "../components/sidebar/breadcrumb-page-client";
@@ -25,11 +23,17 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en" className={`${geist.variable} ${inter.variable}`}>
       <body>
         <Providers>
           <SidebarProvider>
