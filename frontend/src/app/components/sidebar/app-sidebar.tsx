@@ -33,10 +33,9 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="mb-2 flex w-full items-center justify-center text-xs">
+        <div className="mb-2 flex w-full items-center justify-center gap-3 text-xs">
             <Credits />
-        <Upgrade />
-
+            <Upgrade />
         </div>
         <UserButton variant="outline" 
         additionalLinks={

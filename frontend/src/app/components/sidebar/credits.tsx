@@ -3,6 +3,7 @@
 import { headers } from "next/headers"
 import { auth } from "~/lib/auth"
 import { db } from "~/server/db";
+import { Coins } from "lucide-react";
 
 export async function Credits(){
     const session = await auth.api.getSession({
@@ -17,10 +18,12 @@ export async function Credits(){
     });
 
     return (
-        <>
-            <p className="font-bold">{user.credits}</p>
-            <span className="mx-1">/</span>
-            <p className="font-semibold text-muted-foreground">Credits</p>
-        </>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors duration-200">
+            <Coins className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-baseline gap-1">
+                <span className="font-semibold text-foreground text-sm">{user.credits}</span>
+                <span className="text-muted-foreground text-xs">Credits</span>
+            </div>
+        </div>
     )
 }
