@@ -42,7 +42,7 @@ export async function AppSidebar() {
         additionalLinks={
             [
                 {label: "Dashboard", 
-                href: "/customer-portal", 
+                href: "/dashboard", 
                 icon:<User/>,
                 },
                 ]}/>
