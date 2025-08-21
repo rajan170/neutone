@@ -1,11 +1,12 @@
 "use client"
 
 import { Switch } from "~/components/ui/switch";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, Loader2, Music } from "lucide-react";
 import { useState } from "react"
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { Textarea } from "~/components/ui/textarea";
+import { toast } from "sonner";
 
 
 export function SongPanel(){
@@ -16,6 +17,7 @@ export function SongPanel(){
     const [lyricsMode, setLyricsMode] = useState<"write" | "auto">("write")
     const [lyrics, setLyrics] = useState("")
     const [styleInput, setStyleInput] = useState("")
+    const [loading, setLoading] = useState(false)
     
 
     // Computed value that combines description with selected tags
@@ -31,6 +33,22 @@ export function SongPanel(){
         "Chill", "Happy", "Energetic", "Party", 
         "Romantic", "Sad", "Relaxing", "Epic", "Dark", "Cinematic"
       ]
+
+
+      const handleCreateSong = async () => {
+        if (mode === "basic" && !description.trim()){
+            toast.error("Please enter a description.")
+            return;
+        }
+
+        if (mode === "advanced" && !styleInput.trim()){
+            toast.error("Please add some styles for your song.")
+            return;
+        }
+      }
+
+      
+
 
     const handleInspirationTagClick = (tag: string) => {
         if(!selectedTags.includes(tag)){
@@ -199,6 +217,34 @@ export function SongPanel(){
                     </TabsContent>
                 </Tabs>
             </div>
+            
+            <div className="p-4 border-t border-border bg-muted">
+                <div className="relative group w-full">
+                    <div className="absolute -inset-[2px] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className={`absolute inset-0 rounded-xl blur-sm ${
+                            mode === "advanced" && lyricsMode === "auto" 
+                                ? 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500' 
+                                : 'bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-500'
+                        }`}></div>
+                        <div className="absolute inset-[2px] rounded-xl bg-muted"></div>
+                    </div> 
+                     <Button 
+                     onClick={handleCreateSong}
+                     disabled={loading} 
+                     className={`relative w-full h-12 transition-all duration-300 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.01] overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed ${
+                        mode === "advanced" && lyricsMode === "auto"
+                            ? 'bg-blue-50 text-blue-900 hover:bg-blue-100 border border-blue-200 hover:border-blue-300'
+                            : 'bg-emerald-50 text-emerald-900 hover:bg-emerald-100 border border-emerald-200 hover:border-emerald-300'
+                     }`}>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
+                        <span className="relative z-10 flex items-center">
+                            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Music className="w-4 h-4 mr-2" />}
+                            {loading ? "Creating..." : "Create"}
+                        </span>
+                    </Button> 
+                </div>
+            </div>                    
         </div>
+        
     )
 }
