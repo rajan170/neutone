@@ -16,7 +16,7 @@ export interface GenerateRequest {
     describedLyrics?: string;
 }
 
-export async function genarateSong(generateRequest: GenerateRequest) {
+export async function generateSong(generateRequest: GenerateRequest) {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
@@ -27,7 +27,6 @@ export async function genarateSong(generateRequest: GenerateRequest) {
     await queueSong(generateRequest, 15, session.user.id)
 
     revalidatePath("/create");
-
 }
 
 

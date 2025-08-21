@@ -7,6 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { Textarea } from "~/components/ui/textarea";
 import { toast } from "sonner";
+import { generateSong, type GenerateRequest } from "~/actions/generate";
 
 
 export function SongPanel(){
@@ -45,10 +46,48 @@ export function SongPanel(){
             toast.error("Please add some styles for your song.")
             return;
         }
+
+        let requestBody: GenerateRequest;
+
+        // Basic mode
+        if (mode === "basic"){
+            requestBody = {
+                fullDescribedSong: description,
+                instrumental,
+            };
+        } else{
+            const prompt = styleInput;
+            if(lyricsMode === "write"){
+                requestBody = {
+                    prompt: prompt,
+                    lyrics: lyrics,
+                    instrumental: instrumental,
+                };
+                // Auto mode
+            } else{
+                requestBody = {
+                    prompt,
+                    describedLyrics: lyrics,
+                    instrumental,
+                }
+            }
+        }
+
+        try{
+            setLoading(true);
+            await generateSong(requestBody);
+            setDescription("");
+            setSelectedTags([]);
+            setInstrumental(false);
+            setLyrics("");
+            setStyleInput("");
+        } catch (error){
+            console.error(error);
+            toast.error("Failed to create song. Please try again.");
+        } finally{
+            setLoading(false);
+        }
       }
-
-      
-
 
     const handleInspirationTagClick = (tag: string) => {
         if(!selectedTags.includes(tag)){
@@ -60,7 +99,6 @@ export function SongPanel(){
         }
     }
 
-    
     return(
         <div className="bg-muted/50 flex w-full flex-col lg:w-80">
             <div className="flex-1 overflow-y-auto p-4">
@@ -167,6 +205,7 @@ export function SongPanel(){
                              value={lyrics} 
                              placeholder={lyricsMode === "write" ? "Write your lyrics here" : "Describe your song to generate lyrics"}
                              onChange={(e) => setLyrics(e.target.value)}
+                             disabled={lyricsMode === "write" && instrumental}
                              className="min-h-[190px] resize-none"
                              />
 
