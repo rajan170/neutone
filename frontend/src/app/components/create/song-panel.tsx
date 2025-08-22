@@ -201,7 +201,7 @@ export function SongPanel(){
                                 </div>
                             </div>
 
-                             <Textarea 
+                             <Textarea
                              value={lyrics} 
                              placeholder={lyricsMode === "write" ? "Write your lyrics here" : "Describe your song to generate lyrics"}
                              onChange={(e) => setLyrics(e.target.value)}

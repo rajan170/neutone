@@ -3,17 +3,29 @@ import { redirect } from "next/navigation";
 import { auth } from "~/lib/auth";
 
 import { SongPanel } from "~/app/components/create/song-panel";
+import { Suspense } from "react";
+import TrackListFetcher from "~/app/components/create/track-list-fetcher";
+import { LoaderFive as Loader } from "~/components/ui/loader";
 
 export default async function HomePage() {
-  const session = await auth.api.getSession({headers: await headers()})
-  
-  if (!session){
-    redirect("/auth/sign-in")
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) {
+    redirect("/auth/sign-in");
   }
 
   return (
-   <div className="flex lg:flex-row flex-col h-full">
-    <SongPanel />
-   </div>
+    <div className="flex h-full flex-col lg:flex-row">
+      <SongPanel />
+      <Suspense
+        fallback={
+          <div className="flex h-full w-full items-center justify-center">
+            <Loader text="Loading Tracks..."/>
+          </div>
+        }
+      >
+        <TrackListFetcher />
+      </Suspense>
+    </div>
   );
 }

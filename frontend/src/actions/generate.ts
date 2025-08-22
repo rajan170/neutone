@@ -6,7 +6,9 @@ import { redirect } from "next/navigation";
 import { inngest } from "~/inngest/client";
 import { auth } from "~/lib/auth"
 import { db } from "~/server/db";
-
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { env } from "~/env";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export interface GenerateRequest {
     prompt?: string;
@@ -60,4 +62,25 @@ export async function queueSong(generateRequest: GenerateRequest, guidanceScale:
             userId: song.userId,
         }
     });
-} 
+}
+
+export async function getPresignedUrl(s3Key: string) {
+    const s3Client = new S3Client({
+        region: env.AWS_REGION,
+        credentials: {
+            accessKeyId: env.AWS_ACCESS_KEY,
+            secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+        }
+    });
+
+    const command = new GetObjectCommand({
+        Bucket: env.S3_BUCKET_NAME,
+        Key: s3Key,
+    });
+
+
+    return await getSignedUrl(s3Client, command, {
+        expiresIn: 3600, // 1 hour
+    });
+}
+
