@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "~/lib/auth";
 import { db } from "~/server/db";
+import { getPresignedUrl } from "~/actions/generate";
 
 export default async function TrackListFetcher() {
   const session = await auth.api.getSession({
@@ -31,7 +32,25 @@ export default async function TrackListFetcher() {
 
   const songsWithThumbnail = await Promise.all(
     songs.map(async (song) => {
-        const thumbnailUrl = song.thumbnail_s3_key ? true :null;
+        const thumbnailUrl = song.thumbnail_s3_key ? getPresignedUrl(song.thumbnail_s3_key) :null;
+        
+        return{
+            id: song.id,
+            title: song.title,
+            createdAt: song.createdAt,
+            prompt: song.prompt,
+            instrumental: song.instrumental,
+            lyrics: song.lyrics,
+            describedLyrics: song.describedLyrics,
+            fullDescribedSong: song.fullDescribedSong,
+            thumbnailUrl,
+            playUrl: null, 
+            status: song.status,
+            createdByUserName: song.user.name,
+            published: song.published,
+            
+
+        }
     })
   )
 
