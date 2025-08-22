@@ -25,6 +25,12 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const filteredTracks = tracks.filter(
+    (track) =>
+      track.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      track.prompt?.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   return (
     <div className="flex flex-1 flex-col overflow-y-scroll">
       <div className="flex-1 p-6">
@@ -53,6 +59,15 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
             Refresh
           </Button>
         </div>
+
+        {/* <div className="space-y-2">
+            {filteredTracks.length > 0 ? (filteredTracks.map((track) => (
+                switch(track.status) {
+                   case "failed":
+                    return <div key={track.id}></div>
+                }
+            ))) : <></>}
+        </div>  */}
       </div>
     </div>
   );

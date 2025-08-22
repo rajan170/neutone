@@ -115,7 +115,7 @@ export function SongPanel(){
                         <div className="flex flex-col gap-3">
                             <label className="text-sm font-medium">Describe your song</label>
                             <Textarea 
-                            className="resize-none text-muted-foreground min-h-[190px]" 
+                            className="resize-none text-muted-foreground h-[190px]" 
                             placeholder="A song about a cat's life in the city" 
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -206,7 +206,7 @@ export function SongPanel(){
                              placeholder={lyricsMode === "write" ? "Write your lyrics here" : "Describe your song to generate lyrics"}
                              onChange={(e) => setLyrics(e.target.value)}
                              disabled={lyricsMode === "write" && instrumental}
-                             className="min-h-[190px] resize-none"
+                             className="h-[190px] resize-none"
                              />
 
 
@@ -226,7 +226,7 @@ export function SongPanel(){
                                 placeholder="Write custom styles"
                                 value={styleInput}
                                 onChange={(e) => setStyleInput(e.target.value)}
-                                className="resize-none min-h-[100px]"
+                                className="resize-none h-[100px]"
                                 />
                             </div>
 

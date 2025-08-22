@@ -14,10 +14,14 @@ export const generateSong = inngest.createFunction(
         id: "generate-song",
         concurrency: { limit: 1, key: "event.data.userId" },
         onFailure: async ({ event, error }) => {
-            return await db.song.update({
-                where: { id: event?.data?.event?.data?.songId as string },
-                data: { status: "failed" },
-            });
+            // Best-effort extraction of songId
+            const songId = (event as unknown as { data?: { songId?: string } })?.data?.songId;
+            if (songId) {
+                return await db.song.update({
+                    where: { id: songId },
+                    data: { status: "failed" },
+                });
+            }
         },
     },
 
@@ -84,7 +88,7 @@ export const generateSong = inngest.createFunction(
             }
             //Custom mode: prompt + described lyrics
             else if (song.lyrics && song.prompt) {
-                endpoint = String(env.GENERATE_FROM_DESCRIBED_LYRICS_ENDPOINT);
+                endpoint = String(env.GENERATE_FROM_LYRICS_ENDPOINT);
                 body = {
                     lyrics: song.lyrics,
                     prompt: song.prompt,
@@ -95,7 +99,7 @@ export const generateSong = inngest.createFunction(
             else if (song.describedLyrics && song.prompt) {
                 endpoint = String(env.GENERATE_FROM_DESCRIBED_LYRICS_ENDPOINT);
                 body = {
-                    describedLyrics: song.describedLyrics,
+                    described_lyrics: song.describedLyrics,
                     prompt: song.prompt,
                     ...commonParams
                 };
@@ -131,19 +135,21 @@ export const generateSong = inngest.createFunction(
                 }
             });
 
+
+
             await step.run("update-song-result", async () => {
                 const responseData = response.ok ? ((await response.json()) as {
-                    s3_key: string;
-                    cover_image_s3_key: string;
-                    categories: string[];
+                    s3_key?: string;
+                    cover_img_s3_key?: string;
+                    categories?: string[];
                 }) : null;
 
                 await db.song.update({
                     where: {
                         id: songId,
                     }, data: {
-                        s3key: responseData?.s3_key,
-                        thumbnail_s3_key: responseData?.cover_image_s3_key,
+                        s3key: responseData?.s3_key ?? null,
+                        thumbnail_s3_key: responseData?.cover_img_s3_key ?? null,
                         status: response.ok ? "processed" : "failed",
                     }
                 });

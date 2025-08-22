@@ -39,6 +39,8 @@ export async function queueSong(generateRequest: GenerateRequest, guidanceScale:
     if (generateRequest.fullDescribedSong) title = generateRequest.fullDescribedSong
 
     title = title.charAt(0).toUpperCase() + title.slice(1)
+    // Limit title length
+    if (title.length > 50) title = title.substring(0, 47) + "..."
 
     const song = await db.song.create({
         data: {
@@ -76,6 +78,7 @@ export async function getPresignedUrl(s3Key: string) {
     const command = new GetObjectCommand({
         Bucket: env.S3_BUCKET_NAME,
         Key: s3Key,
+        ResponseContentDisposition: `attachment; filename="${s3Key.split("/").pop()}"`,
     });
 
 
