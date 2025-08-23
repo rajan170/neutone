@@ -78,9 +78,7 @@ export async function getPresignedUrl(s3Key: string) {
     const command = new GetObjectCommand({
         Bucket: env.S3_BUCKET_NAME,
         Key: s3Key,
-        ResponseContentDisposition: `attachment; filename="${s3Key.split("/").pop()}"`,
     });
-
 
     return await getSignedUrl(s3Client, command, {
         expiresIn: 3600, // 1 hour

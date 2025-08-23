@@ -1,9 +1,19 @@
 "use client";
 
-import { Loader2, RefreshCcw, Search } from "lucide-react";
+import {
+  CreditCard,
+  Clock,
+  Loader2,
+  RefreshCcw,
+  Search,
+  XCircle,
+  Zap,
+  Music,
+} from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import Image from "next/image";
 
 export interface Track {
   id: string;
@@ -23,7 +33,7 @@ export interface Track {
 
 export default function TracksList({ tracks }: { tracks: Track[] }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshing] = useState(false);
 
   const filteredTracks = tracks.filter(
     (track) =>
@@ -49,7 +59,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
             variant="outline"
             size="sm"
             className="border-1 border-black"
-            onClick={() => {}}
+            onClick={() => window.location.reload()}
           >
             {isRefreshing ? (
               <Loader2 className="mr-2 animate-spin" />
@@ -60,14 +70,442 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
           </Button>
         </div>
 
-        {/* <div className="space-y-2">
-            {filteredTracks.length > 0 ? (filteredTracks.map((track) => (
-                switch(track.status) {
-                   case "failed":
-                    return <div key={track.id}></div>
-                }
-            ))) : <></>}
-        </div>  */}
+        {/* Track List */}
+        <div className="space-y-2">
+          {filteredTracks.length > 0 ? (
+            filteredTracks.map((track) => {
+              switch (track.status) {
+                case "processing":
+                case "queued":
+                  return (
+                    <div
+                      key={track.id}
+                      className="group relative overflow-hidden rounded-2xl border border-indigo-200/40 bg-gradient-to-br from-indigo-50/80 via-blue-50/60 to-violet-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:shadow-xl dark:border-indigo-700/40 dark:from-indigo-950/40 dark:via-blue-950/30 dark:to-violet-950/40"
+                    >
+                      {/* Animated Background */}
+                      <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-indigo-400/10 via-blue-400/5 to-violet-400/10" />
+
+                      {/* Floating Particles */}
+                      <div className="absolute top-2 right-4 h-2 w-2 animate-bounce rounded-full bg-indigo-400/60 [animation-delay:0.5s]" />
+                      <div className="absolute top-6 right-8 h-1 w-1 animate-ping rounded-full bg-blue-400/40 [animation-delay:1s]" />
+                      <div className="absolute bottom-6 left-4 h-1.5 w-1.5 animate-pulse rounded-full bg-violet-400/50 [animation-delay:1.5s]" />
+
+                      {/* Content */}
+                      <div className="relative flex items-start gap-4">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-100 to-blue-100 shadow-md dark:from-indigo-800 dark:to-blue-800">
+                          <Clock
+                            className="h-6 w-6 animate-spin text-indigo-600 dark:text-indigo-300"
+                            style={{ animationDuration: "3s" }}
+                          />
+                        </div>
+
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div>
+                            <h3 className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
+                              {track.title}
+                            </h3>
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700 dark:bg-indigo-800 dark:text-indigo-200">
+                                <div className="flex space-x-1">
+                                  <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-500 [animation-delay:-0.3s]"></div>
+                                  <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-500 [animation-delay:-0.15s]"></div>
+                                  <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-indigo-500"></div>
+                                </div>
+                                Processing
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Song Details */}
+                          <div className="rounded-lg bg-white/60 p-3 backdrop-blur-sm dark:bg-slate-900/40">
+                            <div className="space-y-2 text-sm">
+                              {track.prompt && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                                    Style:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.prompt}
+                                  </span>
+                                </div>
+                              )}
+                              {track.fullDescribedSong && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-indigo-600 dark:text-indigo-400">
+                                    Theme:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.fullDescribedSong.length > 50
+                                      ? `${track.fullDescribedSong.substring(0, 50)}...`
+                                      : track.fullDescribedSong}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-xs text-indigo-500 dark:text-indigo-400">
+                                  {track.instrumental
+                                    ? "🎵 Instrumental"
+                                    : "🎤 With Vocals"}
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                  {new Date(
+                                    track.createdAt,
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-xs text-indigo-600 dark:text-indigo-300">
+                            <div className="h-2 w-2 animate-pulse rounded-full bg-indigo-500" />
+                            Generating your masterpiece... Usually takes 1-2
+                            minutes
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+
+                case "failed":
+                  return (
+                    <div
+                      key={track.id}
+                      className="group relative overflow-hidden rounded-2xl border border-red-200/40 bg-gradient-to-br from-red-50/60 via-rose-50/40 to-pink-50/60 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-xl dark:border-red-800/40 dark:from-red-950/30 dark:via-rose-950/20 dark:to-pink-950/30"
+                    >
+                      {/* Glitch Effect */}
+                      <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-red-500/5 to-transparent" />
+
+                      {/* Error Indicators */}
+                      <div className="absolute top-3 right-3 h-2 w-2 animate-ping rounded-full bg-red-500/60" />
+                      <div className="absolute bottom-4 left-3 h-1 w-1 animate-bounce rounded-full bg-red-400/40 [animation-delay:0.7s]" />
+
+                      {/* Content */}
+                      <div className="relative flex items-start gap-4">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-100 to-rose-100 shadow-md dark:from-red-900 dark:to-rose-900">
+                          <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                        </div>
+
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div>
+                            <h3 className="text-lg font-semibold text-red-900 dark:text-red-100">
+                              {track.title}
+                            </h3>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-900 dark:text-red-200">
+                              <XCircle className="h-3 w-3" />
+                              Generation Failed
+                            </span>
+                          </div>
+
+                          {/* Song Details */}
+                          <div className="rounded-lg bg-white/60 p-3 backdrop-blur-sm dark:bg-slate-900/40">
+                            <div className="space-y-2 text-sm">
+                              {track.prompt && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-red-600 dark:text-red-400">
+                                    Style:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.prompt}
+                                  </span>
+                                </div>
+                              )}
+                              {track.fullDescribedSong && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-red-600 dark:text-red-400">
+                                    Theme:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.fullDescribedSong.length > 50
+                                      ? `${track.fullDescribedSong.substring(0, 50)}...`
+                                      : track.fullDescribedSong}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-xs text-red-500 dark:text-red-400">
+                                  {track.instrumental
+                                    ? "🎵 Instrumental"
+                                    : "🎤 With Vocals"}
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                  {new Date(
+                                    track.createdAt,
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button className="group/btn inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-500 to-rose-500 px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:scale-105 hover:from-red-600 hover:to-rose-600 hover:shadow-lg active:scale-95 dark:from-red-600 dark:to-rose-700">
+                            <RefreshCcw className="h-4 w-4 transition-transform group-hover/btn:rotate-180" />
+                            Retry Generation
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+
+                case "no-credits":
+                  return (
+                    <div
+                      key={track.id}
+                      className="group relative overflow-hidden rounded-2xl border border-amber-200/40 bg-gradient-to-br from-amber-50/80 via-yellow-50/60 to-orange-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:shadow-xl dark:border-amber-700/40 dark:from-amber-950/40 dark:via-yellow-950/30 dark:to-orange-950/40"
+                    >
+                      {/* Premium Glow Effect */}
+                      <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-amber-400/10 via-yellow-400/5 to-orange-400/10" />
+
+                      {/* Floating Premium Elements */}
+                      <div className="absolute top-2 right-3 h-3 w-3 animate-bounce rounded-full bg-amber-400/70 [animation-delay:0.3s]" />
+                      <div className="absolute top-5 right-7 h-1.5 w-1.5 animate-ping rounded-full bg-yellow-400/50 [animation-delay:0.8s]" />
+                      <div className="absolute bottom-5 left-3 h-2 w-2 animate-pulse rounded-full bg-orange-400/60 [animation-delay:1.2s]" />
+
+                      {/* Content */}
+                      <div className="relative flex items-start gap-4">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-200 to-orange-200 shadow-md dark:from-amber-700 dark:to-orange-700">
+                          <CreditCard className="h-6 w-6 animate-pulse text-amber-700 dark:text-amber-200" />
+                        </div>
+
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div>
+                            <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
+                              {track.title}
+                            </h3>
+                            <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-800 dark:text-amber-200">
+                              Credits Needed
+                            </span>
+                          </div>
+
+                          {/* Song Details */}
+                          <div className="rounded-lg border border-amber-100/50 bg-white/70 p-3 backdrop-blur-sm dark:border-amber-800/30 dark:bg-slate-900/50">
+                            <div className="space-y-2 text-sm">
+                              {track.prompt && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-amber-600 dark:text-amber-400">
+                                    Style:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.prompt}
+                                  </span>
+                                </div>
+                              )}
+                              {track.fullDescribedSong && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-amber-600 dark:text-amber-400">
+                                    Theme:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.fullDescribedSong.length > 50
+                                      ? `${track.fullDescribedSong.substring(0, 50)}...`
+                                      : track.fullDescribedSong}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-xs text-amber-500 dark:text-amber-400">
+                                  {track.instrumental
+                                    ? "🎵 Instrumental"
+                                    : "🎤 With Vocals"}
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                  {new Date(
+                                    track.createdAt,
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button className="group/btn relative overflow-hidden rounded-lg bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95">
+                            <div className="absolute inset-0 bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
+                            <div className="relative flex items-center gap-2">
+                              <Zap className="h-4 w-4 animate-pulse" />
+                              Unlock with Premium
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+
+                case "failed":
+                  return (
+                    <div
+                      key={track.id}
+                      className="group relative overflow-hidden rounded-2xl border border-slate-200/50 bg-gradient-to-br from-slate-50/80 via-gray-50/60 to-slate-100/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-xl dark:border-slate-700/50 dark:from-slate-950/40 dark:via-gray-950/30 dark:to-slate-900/40"
+                    >
+                      {/* Subtle Error Animation */}
+                      <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-red-500/5 to-transparent opacity-50" />
+
+                      {/* Error Indicators */}
+                      <div className="absolute top-3 right-3 h-2 w-2 animate-ping rounded-full bg-red-400/60" />
+
+                      {/* Content */}
+                      <div className="relative flex items-start gap-4">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-gray-100 shadow-md dark:from-slate-800 dark:to-gray-800">
+                          <XCircle className="h-6 w-6 text-red-500 dark:text-red-400" />
+                        </div>
+
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div>
+                            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                              {track.title}
+                            </h3>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-900/40 dark:text-red-300">
+                              <XCircle className="h-3 w-3" />
+                              Failed
+                            </span>
+                          </div>
+
+                          {/* Song Details */}
+                          <div className="rounded-lg border border-slate-100/50 bg-white/70 p-3 backdrop-blur-sm dark:border-slate-800/30 dark:bg-slate-900/50">
+                            <div className="space-y-2 text-sm">
+                              {track.prompt && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-slate-600 dark:text-slate-400">
+                                    Style:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.prompt}
+                                  </span>
+                                </div>
+                              )}
+                              {track.fullDescribedSong && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-slate-600 dark:text-slate-400">
+                                    Theme:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.fullDescribedSong.length > 50
+                                      ? `${track.fullDescribedSong.substring(0, 50)}...`
+                                      : track.fullDescribedSong}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                  {track.instrumental
+                                    ? "🎵 Instrumental"
+                                    : "🎤 With Vocals"}
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                  {new Date(
+                                    track.createdAt,
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
+                              Server error or invalid parameters
+                            </div>
+                            <button className="group/btn inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:scale-105 hover:from-slate-700 hover:to-slate-800 hover:shadow-lg active:scale-95">
+                              <RefreshCcw className="h-4 w-4 transition-transform group-hover/btn:rotate-180" />
+                              Retry
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+
+                default:
+                  return (
+                    <div
+                      key={track.id}
+                      className="group relative overflow-hidden rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 via-green-50/60 to-teal-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:shadow-xl dark:border-emerald-700/40 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40"
+                      onClick={() => {}} // Implement the play bar here
+                    >
+                      {/* Success Glow Effect */}
+                      <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-emerald-400/10 via-green-400/5 to-teal-400/10" />
+                      
+                      {/* Success Particles */}
+                      <div className="absolute top-2 right-3 h-2 w-2 animate-bounce rounded-full bg-emerald-400/60 [animation-delay:0.2s]" />
+                      <div className="absolute top-5 right-7 h-1 w-1 animate-ping rounded-full bg-green-400/50 [animation-delay:0.6s]" />
+                      <div className="absolute bottom-5 left-3 h-1.5 w-1.5 animate-pulse rounded-full bg-teal-400/60 [animation-delay:1s]" />
+                      
+                      {/* Content */}
+                      <div className="relative flex items-start gap-4">
+                        <div className="group relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl shadow-md">
+                          {track.thumbnailUrl ? (
+                            <img
+                              src={track.thumbnailUrl}
+                              width={80}
+                              height={80}
+                              alt={track.title}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-800 dark:to-teal-800">
+                              <Music className="h-6 w-6 animate-pulse rounded-full" />
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div>
+                            <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">
+                              {track.title}
+                            </h3>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-800 dark:text-emerald-200">
+                              ✓ Ready to Play
+                            </span>
+                          </div>
+
+                          {/* Song Details */}
+                          <div className="rounded-lg border border-emerald-100/50 bg-white/70 p-3 backdrop-blur-sm dark:border-emerald-800/30 dark:bg-slate-900/50">
+                            <div className="space-y-2 text-sm">
+                              {track.prompt && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                                    Style:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.prompt}
+                                  </span>
+                                </div>
+                              )}
+                              {track.fullDescribedSong && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                                    Theme:
+                                  </span>
+                                  <span className="text-slate-700 dark:text-slate-300">
+                                    {track.fullDescribedSong.length > 50
+                                      ? `${track.fullDescribedSong.substring(0, 50)}...`
+                                      : track.fullDescribedSong}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-xs text-emerald-500 dark:text-emerald-400">
+                                  {track.instrumental
+                                    ? "🎵 Instrumental"
+                                    : "🎤 With Vocals"}
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                  {new Date(track.createdAt).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-300">
+                            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                            Click to play your generated track
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+              }
+            })
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
     </div>
   );
