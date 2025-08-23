@@ -14,6 +14,8 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import Image from "next/image";
+import { getPlayUrl } from "~/actions/generate";
+
 
 export interface Track {
   id: string;
@@ -34,6 +36,19 @@ export interface Track {
 export default function TracksList({ tracks }: { tracks: Track[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing] = useState(false);
+  const [LoadingTrackId, setLoadingTrackId] = useState<string | null>(null);
+
+  const handleTrackSelect = async (trackId: string) => {
+    if (LoadingTrackId) return;
+
+    setLoadingTrackId(trackId);
+
+    const playUrl = await getPlayUrl(trackId);
+
+    setLoadingTrackId(null);
+
+    console.log(playUrl);
+  };
 
   const filteredTracks = tracks.filter(
     (track) =>
@@ -42,8 +57,8 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
   );
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-scroll">
-      <div className="flex-1 p-6">
+    <div className="flex flex-1 flex-col min-h-0">
+      <div className="flex-1 p-6 min-h-0 flex flex-col">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div className="relative max-w-md flex-1">
             <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
@@ -84,11 +99,6 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                     >
                       {/* Animated Background */}
                       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-indigo-400/10 via-blue-400/5 to-violet-400/10" />
-
-                      {/* Floating Particles */}
-                      <div className="absolute top-2 right-4 h-2 w-2 animate-bounce rounded-full bg-indigo-400/60 [animation-delay:0.5s]" />
-                      <div className="absolute top-6 right-8 h-1 w-1 animate-ping rounded-full bg-blue-400/40 [animation-delay:1s]" />
-                      <div className="absolute bottom-6 left-4 h-1.5 w-1.5 animate-pulse rounded-full bg-violet-400/50 [animation-delay:1.5s]" />
 
                       {/* Content */}
                       <div className="relative flex items-start gap-4">
@@ -170,14 +180,10 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                   return (
                     <div
                       key={track.id}
-                      className="group relative overflow-hidden rounded-2xl border border-red-200/40 bg-gradient-to-br from-red-50/60 via-rose-50/40 to-pink-50/60 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-xl dark:border-red-800/40 dark:from-red-950/30 dark:via-rose-950/20 dark:to-pink-950/30"
+                      className="group  relative overflow-hidden rounded-2xl border border-red-200/40 bg-gradient-to-br from-red-50/60 via-rose-50/40 to-pink-50/60 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-xl dark:border-red-800/40 dark:from-red-950/30 dark:via-rose-950/20 dark:to-pink-950/30"
                     >
                       {/* Glitch Effect */}
                       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-red-500/5 to-transparent" />
-
-                      {/* Error Indicators */}
-                      <div className="absolute top-3 right-3 h-2 w-2 animate-ping rounded-full bg-red-500/60" />
-                      <div className="absolute bottom-4 left-3 h-1 w-1 animate-bounce rounded-full bg-red-400/40 [animation-delay:0.7s]" />
 
                       {/* Content */}
                       <div className="relative flex items-start gap-4">
@@ -253,11 +259,6 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                     >
                       {/* Premium Glow Effect */}
                       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-amber-400/10 via-yellow-400/5 to-orange-400/10" />
-
-                      {/* Floating Premium Elements */}
-                      <div className="absolute top-2 right-3 h-3 w-3 animate-bounce rounded-full bg-amber-400/70 [animation-delay:0.3s]" />
-                      <div className="absolute top-5 right-7 h-1.5 w-1.5 animate-ping rounded-full bg-yellow-400/50 [animation-delay:0.8s]" />
-                      <div className="absolute bottom-5 left-3 h-2 w-2 animate-pulse rounded-full bg-orange-400/60 [animation-delay:1.2s]" />
 
                       {/* Content */}
                       <div className="relative flex items-start gap-4">
@@ -415,26 +416,22 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                   return (
                     <div
                       key={track.id}
-                      className="group relative overflow-hidden rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 via-green-50/60 to-teal-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:shadow-xl dark:border-emerald-700/40 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40"
-                      onClick={() => {}} // Implement the play bar here
+                      className="group relative overflow-hidden rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 via-green-50/60 to-teal-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:shadow-xl dark:border-emerald-700/40 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40 cursor-pointer"
+                      onClick={() => handleTrackSelect(track.id)}
                     >
                       {/* Success Glow Effect */}
                       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-emerald-400/10 via-green-400/5 to-teal-400/10" />
-                      
-                      {/* Success Particles */}
-                      <div className="absolute top-2 right-3 h-2 w-2 animate-bounce rounded-full bg-emerald-400/60 [animation-delay:0.2s]" />
-                      <div className="absolute top-5 right-7 h-1 w-1 animate-ping rounded-full bg-green-400/50 [animation-delay:0.6s]" />
-                      <div className="absolute bottom-5 left-3 h-1.5 w-1.5 animate-pulse rounded-full bg-teal-400/60 [animation-delay:1s]" />
-                      
+
                       {/* Content */}
                       <div className="relative flex items-start gap-4">
                         <div className="group relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl shadow-md">
                           {track.thumbnailUrl ? (
-                            <img
+                            <Image
                               src={track.thumbnailUrl}
                               width={80}
                               height={80}
                               alt={track.title}
+                              unoptimized
                               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                             />
                           ) : (
@@ -443,7 +440,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="min-w-0 flex-1 space-y-3">
                           <div>
                             <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">
@@ -486,12 +483,14 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                                     : "🎤 With Vocals"}
                                 </span>
                                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                                  {new Date(track.createdAt).toLocaleDateString()}
+                                  {new Date(
+                                    track.createdAt,
+                                  ).toLocaleDateString()}
                                 </span>
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-300">
                             <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
                             Click to play your generated track

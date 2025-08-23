@@ -66,7 +66,7 @@ export async function queueSong(generateRequest: GenerateRequest, guidanceScale:
     });
 }
 
-export async function getPresignedUrl(s3Key: string) {
+export async function getPresignedUrl(s3key: string) {
     const s3Client = new S3Client({
         region: env.AWS_REGION,
         credentials: {
@@ -77,7 +77,7 @@ export async function getPresignedUrl(s3Key: string) {
 
     const command = new GetObjectCommand({
         Bucket: env.S3_BUCKET_NAME,
-        Key: s3Key,
+        Key: s3key,
     });
 
     return await getSignedUrl(s3Client, command, {
@@ -85,3 +85,35 @@ export async function getPresignedUrl(s3Key: string) {
     });
 }
 
+export async function getPlayUrl(songId: string) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) redirect("auth/sign-in");
+    const song = await db.song.findUniqueOrThrow({
+        where: {
+            id: songId,
+            OR: [{ userId: session.user.id }, { published: true }],
+            s3key: {
+                not: null
+            }
+        },
+        select: {
+            s3key: true,
+        }
+    });
+
+    await db.song.update({
+        where: {
+            id: songId,
+        },
+        data: {
+            listenCount: {
+                increment: 1,
+            }
+        }
+    })
+
+    return await getPresignedUrl(song.s3key!);
+}
