@@ -9,13 +9,14 @@ import {
   XCircle,
   Zap,
   Music,
+  Play,
+  PaintbrushVertical,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import Image from "next/image";
 import { getPlayUrl } from "~/actions/generate";
-
 
 export interface Track {
   id: string;
@@ -36,16 +37,16 @@ export interface Track {
 export default function TracksList({ tracks }: { tracks: Track[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing] = useState(false);
-  const [LoadingTrackId, setLoadingTrackId] = useState<string | null>(null);
+  const [loadingTrackId, setloadingTrackId] = useState<string | null>(null);
 
   const handleTrackSelect = async (trackId: string) => {
-    if (LoadingTrackId) return;
+    if (loadingTrackId) return;
 
-    setLoadingTrackId(trackId);
+    setloadingTrackId(trackId);
 
     const playUrl = await getPlayUrl(trackId);
 
-    setLoadingTrackId(null);
+    setloadingTrackId(null);
 
     console.log(playUrl);
   };
@@ -57,8 +58,8 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
   );
 
   return (
-    <div className="flex flex-1 flex-col min-h-0">
-      <div className="flex-1 p-6 min-h-0 flex flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col p-6">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div className="relative max-w-md flex-1">
             <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
@@ -180,7 +181,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                   return (
                     <div
                       key={track.id}
-                      className="group  relative overflow-hidden rounded-2xl border border-red-200/40 bg-gradient-to-br from-red-50/60 via-rose-50/40 to-pink-50/60 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-xl dark:border-red-800/40 dark:from-red-950/30 dark:via-rose-950/20 dark:to-pink-950/30"
+                      className="group relative overflow-hidden rounded-2xl border border-red-200/40 bg-gradient-to-br from-red-50/60 via-rose-50/40 to-pink-50/60 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-xl dark:border-red-800/40 dark:from-red-950/30 dark:via-rose-950/20 dark:to-pink-950/30"
                     >
                       {/* Glitch Effect */}
                       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-red-500/5 to-transparent" />
@@ -416,11 +417,14 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                   return (
                     <div
                       key={track.id}
-                      className="group relative overflow-hidden rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 via-green-50/60 to-teal-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:shadow-xl dark:border-emerald-700/40 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40 cursor-pointer"
+                      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 via-green-50/60 to-teal-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:border-emerald-300/60 hover:bg-gradient-to-br hover:from-emerald-100/90 hover:via-green-100/80 hover:to-teal-100/90 hover:shadow-xl dark:border-emerald-700/40 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40 dark:hover:border-emerald-600/60 dark:hover:from-emerald-900/50 dark:hover:via-green-900/40 dark:hover:to-teal-900/50"
                       onClick={() => handleTrackSelect(track.id)}
                     >
                       {/* Success Glow Effect */}
                       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-emerald-400/10 via-green-400/5 to-teal-400/10" />
+
+                      {/* Hover Glow Ring */}
+                      <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-400/20 via-green-400/20 to-teal-400/20 opacity-0 blur-sm transition-opacity duration-500 group-hover:opacity-100" />
 
                       {/* Content */}
                       <div className="relative flex items-start gap-4">
@@ -439,6 +443,25 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                               <Music className="h-6 w-6 animate-pulse rounded-full" />
                             </div>
                           )}
+
+                          <div className="absolute inset-0 rounded-xl bg-black/20 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                            <div className="flex h-full w-full items-center justify-center">
+                              <div className="group/play relative">
+                                {loadingTrackId === track.id ? (
+                                  <div className="flex h-12 w-12 animate-pulse items-center justify-center rounded-full bg-black/30 shadow-lg backdrop-blur-sm">
+                                    <Loader2 className="h-6 w-6 animate-spin text-white" />
+                                  </div>
+                                ) : (
+                                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/30 shadow-lg backdrop-blur-sm transition-all duration-300 group-hover/play:scale-110 group-hover/play:shadow-xl">
+                                    <Play className="h-6 w-6 fill-white text-white transition-transform duration-200 group-hover/play:scale-110" />
+                                    {/* Pulse ring */}
+                                    <div className="absolute inset-0 animate-ping rounded-full border-2 border-white/40" />
+                                    <div className="absolute inset-0 rounded-full border-2 border-white/20" />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                         <div className="min-w-0 flex-1 space-y-3">
@@ -482,7 +505,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                                     ? "🎵 Instrumental"
                                     : "🎤 With Vocals"}
                                 </span>
-                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                                   {new Date(
                                     track.createdAt,
                                   ).toLocaleDateString()}
@@ -490,11 +513,13 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                               </div>
                             </div>
                           </div>
-
-                          <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-300">
-                            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-                            Click to play your generated track
-                          </div>
+                        </div>
+                        <div className="flex items-center justify-end ">
+                          <Button 
+                          variant="outline" 
+                          className={`cursor-pointer ${track.published ? "border-red-200" : ""} w-full border-blue-200 bg-emerald-200 px-3 py-1 hover:bg-emerald-300/10 font-bold text-emerald-900 dark:bg-emerald-800 dark:text-emerald-200 ${track.published ? "bg-emerald-200" : "bg-emerald-200"}`}>
+                            {track.published ? "Unpublish" : <PaintbrushVertical className="h-4 w-4" />}
+                          </Button>
                         </div>
                       </div>
                     </div>
