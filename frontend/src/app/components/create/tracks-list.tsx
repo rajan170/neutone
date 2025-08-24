@@ -12,6 +12,8 @@ import {
   Play,
   Upload,
   EyeOff,
+  MoreHorizontal,
+  Download,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -20,6 +22,7 @@ import Image from "next/image";
 import { getPlayUrl } from "~/actions/generate";
 import { setPublishedStatus } from "~/actions/song";
 import { toast } from "sonner";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 
 export interface Track {
   id: string;
@@ -573,6 +576,31 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                               </div>
                             )}
                           </Button>
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <Button
+                                variant="outline"
+                                size="sm" 
+                                className="w-full ml-2 border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-950/70 shadow-sm hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                              <DropdownMenuItem
+                               className="flex items-center gap-2"
+                               onClick={async (e)=> {
+                                e.stopPropagation()
+                                const playUrl = await getPlayUrl(track.id);
+                                window.open(playUrl, '_blank');
+                               }}
+                               >
+                                Download
+                                <Download className="h-4 w-4" />
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+
                         </div>
                       </div>
                     </div>
