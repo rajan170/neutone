@@ -10,13 +10,16 @@ import {
   Zap,
   Music,
   Play,
-  PaintbrushVertical,
+  Upload,
+  EyeOff,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import Image from "next/image";
 import { getPlayUrl } from "~/actions/generate";
+import { setPublishedStatus } from "~/actions/song";
+import { toast } from "sonner";
 
 export interface Track {
   id: string;
@@ -38,6 +41,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing] = useState(false);
   const [loadingTrackId, setloadingTrackId] = useState<string | null>(null);
+  const [publishingTrackId, setPublishingTrackId] = useState<string | null>(null);
 
   const handleTrackSelect = async (trackId: string) => {
     if (loadingTrackId) return;
@@ -49,6 +53,26 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
     setloadingTrackId(null);
 
     console.log(playUrl);
+  };
+
+  const handlePublishToggle = async (trackId: string, currentPublished: boolean) => {
+    if (publishingTrackId) return;
+
+    setPublishingTrackId(trackId);
+
+    try {
+      await setPublishedStatus(trackId, !currentPublished);
+      toast.success(
+        currentPublished
+          ? "Track unpublished successfully!"
+          : "Track published successfully!"
+      );
+    } catch (error) {
+      console.error("Failed to toggle publish status:", error);
+      toast.error("Failed to update publish status. Please try again.");
+    } finally {
+      setPublishingTrackId(null);
+    }
   };
 
   const filteredTracks = tracks.filter(
@@ -514,11 +538,40 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center justify-end ">
-                          <Button 
-                          variant="outline" 
-                          className={`cursor-pointer ${track.published ? "border-red-200" : ""} w-full border-blue-200 bg-emerald-200 px-3 py-1 hover:bg-emerald-300/10 font-bold text-emerald-900 dark:bg-emerald-800 dark:text-emerald-200 ${track.published ? "bg-emerald-200" : "bg-emerald-200"}`}>
-                            {track.published ? "Unpublish" : <PaintbrushVertical className="h-4 w-4" />}
+                        {/* Publish/Unpublish Button */}
+                        <div className="flex items-center justify-end">
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void handlePublishToggle(track.id, track.published);
+                            }}
+                            disabled={publishingTrackId === track.id}
+                            variant="outline"
+                            size="sm"
+                            className={`w-full transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${
+                              track.published
+                                ? 'border-red-300 bg-red-50 hover:bg-red-100 text-red-700 dark:bg-red-950/50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950/70 shadow-sm'
+                                : 'border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-950/70 shadow-sm'
+                            }`}
+                          >
+                            {publishingTrackId === track.id ? (
+                              <div className="flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <span className="text-xs font-medium">
+                                  {track.published ? 'Unpublishing...' : 'Publishing...'}
+                                </span>
+                              </div>
+                            ) : track.published ? (
+                              <div className="flex items-center gap-2">
+                                <EyeOff className="h-4 w-4" />
+                                <span className="text-xs font-semibold">Unpublish</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <Upload className="h-4 w-4" />
+                                <span className="text-xs font-semibold">Publish</span>
+                              </div>
+                            )}
                           </Button>
                         </div>
                       </div>
