@@ -14,15 +14,23 @@ import {
   EyeOff,
   MoreHorizontal,
   Download,
+  Pencil,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import Image from "next/image";
 import { getPlayUrl } from "~/actions/generate";
-import { setPublishedStatus } from "~/actions/song";
+import { renameSong, setPublishedStatus } from "~/actions/song";
 import { toast } from "sonner";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { RenameDialog } from "./rename-dialog";
+import { useRouter } from "next/navigation";
 
 export interface Track {
   id: string;
@@ -42,9 +50,22 @@ export interface Track {
 
 export default function TracksList({ tracks }: { tracks: Track[] }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isRefreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [loadingTrackId, setloadingTrackId] = useState<string | null>(null);
-  const [publishingTrackId, setPublishingTrackId] = useState<string | null>(null);
+  const [publishingTrackId, setPublishingTrackId] = useState<string | null>(
+    null,
+  );
+  const [trackToRename, setTrackToRename] = useState<Track | null>(null);
+  const router = useRouter();
+
+  const handleTrackRefresh = async () => {
+    setIsRefreshing(true);
+    router.refresh();
+    
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  };
 
   const handleTrackSelect = async (trackId: string) => {
     if (loadingTrackId) return;
@@ -58,7 +79,10 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
     console.log(playUrl);
   };
 
-  const handlePublishToggle = async (trackId: string, currentPublished: boolean) => {
+  const handlePublishToggle = async (
+    trackId: string,
+    currentPublished: boolean,
+  ) => {
     if (publishingTrackId) return;
 
     setPublishingTrackId(trackId);
@@ -68,7 +92,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
       toast.success(
         currentPublished
           ? "Track unpublished successfully!"
-          : "Track published successfully!"
+          : "Track published successfully!",
       );
     } catch (error) {
       console.error("Failed to toggle publish status:", error);
@@ -102,7 +126,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
             variant="outline"
             size="sm"
             className="border-1 border-black"
-            onClick={() => window.location.reload()}
+            onClick={handleTrackRefresh}
           >
             {isRefreshing ? (
               <Loader2 className="mr-2 animate-spin" />
@@ -546,33 +570,42 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                           <Button
                             onClick={(e) => {
                               e.stopPropagation();
-                              void handlePublishToggle(track.id, track.published);
+                              void handlePublishToggle(
+                                track.id,
+                                track.published,
+                              );
                             }}
                             disabled={publishingTrackId === track.id}
                             variant="outline"
                             size="sm"
-                            className={`w-full transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${
+                            className={`w-full transition-all duration-300 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 ${
                               track.published
-                                ? 'border-red-300 bg-red-50 hover:bg-red-100 text-red-700 dark:bg-red-950/50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950/70 shadow-sm'
-                                : 'border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-950/70 shadow-sm'
+                                ? "border-red-300 bg-red-50 text-red-700 shadow-sm hover:bg-red-100 dark:border-red-800 dark:bg-red-950/50 dark:text-red-300 dark:hover:bg-red-950/70"
+                                : "border-emerald-300 bg-emerald-50 text-emerald-700 shadow-sm hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-950/70"
                             }`}
                           >
                             {publishingTrackId === track.id ? (
                               <div className="flex items-center gap-2">
                                 <Loader2 className="h-4 w-4 animate-spin" />
                                 <span className="text-xs font-medium">
-                                  {track.published ? 'Unpublishing...' : 'Publishing...'}
+                                  {track.published
+                                    ? "Unpublishing..."
+                                    : "Publishing..."}
                                 </span>
                               </div>
                             ) : track.published ? (
                               <div className="flex items-center gap-2">
                                 <EyeOff className="h-4 w-4" />
-                                <span className="text-xs font-semibold">Unpublish</span>
+                                <span className="text-xs font-semibold">
+                                  Unpublish
+                                </span>
                               </div>
                             ) : (
                               <div className="flex items-center gap-2">
                                 <Upload className="h-4 w-4" />
-                                <span className="text-xs font-semibold">Publish</span>
+                                <span className="text-xs font-semibold">
+                                  Publish
+                                </span>
                               </div>
                             )}
                           </Button>
@@ -580,27 +613,38 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                           <DropdownMenu>
                             <DropdownMenuTrigger>
                               <Button
-                                variant="outline"
-                                size="sm" 
-                                className="w-full ml-2 border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-950/70 shadow-sm hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                                variant="ghost"
+                                size="sm"
+                                className="ml-2 w-full border-emerald-300 bg-emerald-50 text-emerald-700 shadow-sm hover:scale-105 hover:bg-emerald-100 active:scale-95 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-950/70"
+                              >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-40">
                               <DropdownMenuItem
-                               className="flex items-center gap-2"
-                               onClick={async (e)=> {
-                                e.stopPropagation()
-                                const playUrl = await getPlayUrl(track.id);
-                                window.open(playUrl, '_blank');
-                               }}
-                               >
+                                className="flex items-center gap-2"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  const playUrl = await getPlayUrl(track.id);
+                                  window.open(playUrl, "_blank");
+                                }}
+                              >
                                 Download
                                 <Download className="h-4 w-4" />
                               </DropdownMenuItem>
+
+                              <DropdownMenuItem
+                                className="flex items-center gap-2"
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  setTrackToRename(track);
+                                }}
+                              >
+                                Rename
+                                <Pencil className="h-4 w-4" />
+                              </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
-
                         </div>
                       </div>
                     </div>
@@ -608,10 +652,27 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
               }
             })
           ) : (
-            <></>
+            <div className="flex h-full flex-col items-center justify-center p-2 pt-20 text-center">
+              <Music className="mt-4 mb-4 h-10 w-10 animate-pulse" />
+              <h2 className="text-2xl font-bold">No songs created yet.</h2>
+              <p className="text-muted-foreground mt-4 mb-4 text-sm">
+                {searchQuery
+                  ? "No tracks match your search."
+                  : "Create a song to get started."}
+              </p>
+            </div>
           )}
         </div>
       </div>
+      {trackToRename && (
+        <RenameDialog
+          track={trackToRename}
+          onClose={() => setTrackToRename(null)}
+          onRename={(trackId, newTitle) => {
+            void renameSong(trackId, newTitle);
+          }}
+        />
+      )}
     </div>
   );
 }
