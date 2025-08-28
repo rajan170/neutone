@@ -115,13 +115,12 @@ export function SongPanel(){
                         <div className="flex flex-col gap-3">
                             <label className="text-sm font-medium">Describe your song</label>
                             <Textarea 
-                            className="resize-none text-muted-foreground h-[190px]" 
+                            className="resize-none h-[190px]" 
                             placeholder="A song about a cat's life in the city" 
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             />
                             <input type="hidden" value={combinedContent}/>
-                            {/* <input type="text" value={combinedContent} readOnly className="text-xs bg-gray-100 p-1 mt-2" placeholder="Combined content will appear here"/> */}
                         </div>
                         
                         <div className="flex items-center justify-between">

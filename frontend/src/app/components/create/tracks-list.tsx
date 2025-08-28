@@ -369,10 +369,27 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                           </div>
 
                           <button className="group/btn relative overflow-hidden rounded-lg bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95">
+                            {/* Enhanced hover effect */}
                             <div className="absolute inset-0 bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100" />
+
+                            {/* Electric arc effects */}
+                            <div className="absolute top-0 left-1/4 w-px h-2 bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 animate-pulse" />
+                            <div className="absolute top-0 right-1/4 w-px h-2 bg-gradient-to-b from-transparent via-orange-300 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 animate-pulse [animation-delay:100ms]" />
+                            <div className="absolute bottom-0 left-1/3 w-px h-1.5 bg-gradient-to-t from-transparent via-amber-300 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 animate-pulse [animation-delay:200ms]" />
+
                             <div className="relative flex items-center gap-2">
-                              <Zap className="h-4 w-4 animate-pulse" />
-                              Unlock with Premium
+                              {/* Premium Zap with enhanced effects */}
+                              <div className="relative">
+                                <Zap className="h-4 w-4 text-white drop-shadow-lg group-hover/btn:text-yellow-100 transition-colors duration-300" />
+
+                                {/* Energy rings */}
+                                <div className="absolute inset-0 h-4 w-4 rounded-full border border-yellow-300/30 opacity-0 group-hover/btn:opacity-100 transition-all duration-500 animate-ping" />
+                                <div className="absolute inset-0 h-4 w-4 rounded-full border border-orange-300/20 opacity-0 group-hover/btn:opacity-100 transition-all duration-500 animate-ping [animation-delay:150ms]" />
+
+                                {/* Inner glow */}
+                                <div className="absolute inset-1 bg-gradient-to-r from-yellow-400/40 to-orange-400/40 rounded-full blur-[1px] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                              </div>
+                              <span className="relative z-10">Unlock with Premium</span>
                             </div>
                           </button>
                         </div>

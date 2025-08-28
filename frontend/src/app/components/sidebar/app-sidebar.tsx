@@ -12,6 +12,7 @@ import { Credits } from "./credits"
 import { UserButton } from "@daveyplate/better-auth-ui"
 import { User } from "lucide-react"
 import Upgrade from "./upgrade"
+import Logo from "./logo"
 
 
 
@@ -20,10 +21,8 @@ export async function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-primary font-black text-3xl mt-7 mb-10 flex flex-col items-center justify-center px-2 tracking-widest uppercase font-inter">
-            <p>
-              Neutone 
-            </p> 
+          <SidebarGroupLabel className="mt-7 mb-10 flex items-center justify-center px-2">
+            <Logo size={36} />
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

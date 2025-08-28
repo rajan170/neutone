@@ -1,5 +1,6 @@
 import "~/styles/globals.css";
 
+import { type Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
 import { Providers } from "../components/providers";
 import { Toaster } from "sonner";
@@ -28,6 +29,15 @@ const inter = Inter({
   variable: "--font-inter",
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
+
+export const metadata: Metadata = {
+  title: "Neutone",
+  description: "Music Generation Tool",
+  icons: [
+    { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+    { rel: "icon", url: "/favicon.ico" },
+  ],
+};
 
 export default function RootLayout({
   children,

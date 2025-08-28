@@ -8,7 +8,10 @@ import { Toaster } from "sonner";
 export const metadata: Metadata = {
   title: "Neutone",
   description: "Music Generation Tool",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [
+    { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+    { rel: "icon", url: "/favicon.ico" },
+  ],
 };
 
 const geist = Geist({
