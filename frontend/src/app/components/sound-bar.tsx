@@ -3,7 +3,7 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Download, MoreHorizontal, Music, Pause, Play, Volume2 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Slider } from "~/components/ui/slider";
@@ -14,7 +14,56 @@ export default function SoundBar() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState([50]);
-  const [trackTime, setTrackTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (audioRef.current && track?.url) {
+      setCurrentTime(0);
+      setDuration(0);
+
+      audioRef.current.src = track.url;
+      audioRef.current.load()
+
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined){
+        playPromise.then(() => {
+          setIsPlaying(true);
+        }).catch((error) => {
+          console.error("Failed to play audio", error);
+          setIsPlaying(false);
+        })
+      } else {
+        setIsPlaying(true);
+      }
+    }
+  },[track])
+
+  const formatTime = (time: number) =>{
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
+
+  const togglePlay = () => {
+    if (!track?.url || !audioRef.current) return;
+
+    if(isPlaying){
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      void audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    }
+  }
+
+  const handleSeek = (value: number) => {
+    if (!track?.url) return;
+    //TODO: Implement seek functionality
+  }
 
   return (
     <div className="px-2 pb-2">
@@ -51,7 +100,7 @@ export default function SoundBar() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsPlaying(!isPlaying)}
+                onClick={togglePlay}
               >
                 {isPlaying ? (
                   <Pause className="h-4 w-4" />
@@ -100,11 +149,26 @@ export default function SoundBar() {
           {/* Track Seeker */}
           <div className="flex items-center gap-1">
             <span className="w-8 text-right text-[10px] text-muted-foreground">
-
+              {formatTime(currentTime)}
             </span>
-
+            <Slider
+              value={[currentTime]}
+              max={duration || 100}
+              min={0}
+              step={1}
+              onValueChange={(value) => handleSeek(value[0])}
+              className="flex-1"
+            />
+            <span className="w-8 text-left text-[10px] text-muted-foreground">
+              {formatTime(duration)}
+            </span>
           </div>
         </div>
+          {
+            track?.url &&(
+              <audio src={track?.url} ref={audioRef} preload="metadata"/>
+            )
+          }
       </Card>
     </div>
   );
