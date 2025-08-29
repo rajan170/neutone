@@ -18,6 +18,12 @@ export default function SoundBar() {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  useEffect(()=>{
+    const audio = audioRef.current;
+    if (!audio) return;
+  },[track])
+
+
   useEffect(() => {
     if (audioRef.current && track?.url) {
       setCurrentTime(0);
@@ -60,9 +66,13 @@ export default function SoundBar() {
     }
   }
 
-  const handleSeek = (value: number) => {
+  const handleSeek = (value: number[]) => {
     if (!track?.url) return;
-    //TODO: Implement seek functionality
+    const next = value?.[0] ?? 0;
+    if (audioRef.current){
+      audioRef.current.currentTime = next;
+    }
+    setCurrentTime(next);
   }
 
   return (
@@ -156,7 +166,7 @@ export default function SoundBar() {
               max={duration || 100}
               min={0}
               step={1}
-              onValueChange={(value) => handleSeek(value[0])}
+              onValueChange={handleSeek}
               className="flex-1"
             />
             <span className="w-8 text-left text-[10px] text-muted-foreground">
