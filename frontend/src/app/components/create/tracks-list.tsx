@@ -31,6 +31,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { RenameDialog } from "./rename-dialog";
 import { useRouter } from "next/navigation";
+import { usePlayerStore } from "~/stores/use-player-store";
 
 export interface Track {
   id: string;
@@ -58,6 +59,8 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
   const [trackToRename, setTrackToRename] = useState<Track | null>(null);
   const router = useRouter();
 
+  const setTrack = usePlayerStore((state) => state.setTrack)
+
   const handleTrackRefresh = async () => {
     setIsRefreshing(true);
     router.refresh();
@@ -67,16 +70,25 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
     }, 1000);
   };
 
-  const handleTrackSelect = async (trackId: string) => {
+  const handleTrackSelect = async (track: Track) => {
     if (loadingTrackId) return;
 
-    setloadingTrackId(trackId);
+    setloadingTrackId(track.id);
 
-    const playUrl = await getPlayUrl(trackId);
+    const playUrl = await getPlayUrl(track.id);
 
     setloadingTrackId(null);
 
-    console.log(playUrl);
+    if (playUrl) {
+      setTrack({
+        id: track.id,
+        title: track.title,
+        url: playUrl,
+        artwork: track.thumbnailUrl ?? "",
+        prompt: track.prompt ?? "",
+        author: track.createdByUserName ?? "",
+      })
+    }
   };
 
   const handlePublishToggle = async (
@@ -486,7 +498,7 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                     <div
                       key={track.id}
                       className="group relative cursor-pointer overflow-hidden rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 via-green-50/60 to-teal-50/80 p-5 shadow-lg backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:border-emerald-300/60 hover:bg-gradient-to-br hover:from-emerald-100/90 hover:via-green-100/80 hover:to-teal-100/90 hover:shadow-xl dark:border-emerald-700/40 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40 dark:hover:border-emerald-600/60 dark:hover:from-emerald-900/50 dark:hover:via-green-900/40 dark:hover:to-teal-900/50"
-                      onClick={() => handleTrackSelect(track.id)}
+                      onClick={() => handleTrackSelect(track)}
                     >
                       {/* Success Glow Effect */}
                       <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-emerald-400/10 via-green-400/5 to-teal-400/10" />

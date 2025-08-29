@@ -91,18 +91,21 @@ export async function getPlayUrl(songId: string) {
     })
 
     if (!session) redirect("auth/sign-in");
+    // Fetch uniquely by id, then validate access and availability
     const song = await db.song.findUniqueOrThrow({
-        where: {
-            id: songId,
-            OR: [{ userId: session.user.id }, { published: true }],
-            s3key: {
-                not: null
-            }
-        },
-        select: {
-            s3key: true,
-        }
+        where: { id: songId },
+        select: { s3key: true, published: true, userId: true },
     });
+
+    const isOwner = song.userId === session.user.id;
+    const isPublic = Boolean(song.published);
+    if (!isOwner && !isPublic) {
+        throw new Error("You do not have access to this song.");
+    }
+
+    if (!song.s3key) {
+        throw new Error("Song audio is not available yet.");
+    }
 
     await db.song.update({
         where: {
@@ -115,5 +118,5 @@ export async function getPlayUrl(songId: string) {
         }
     })
 
-    return await getPresignedUrl(song.s3key!);
+    return await getPresignedUrl(song.s3key);
 }
