@@ -18,6 +18,7 @@ import {
 } from "~/components/ui/breadcrumb";
 import { Separator } from "~/components/ui/separator";
 import BreadcrumbPageClient from "../components/sidebar/breadcrumb-page-client";
+import SoundBar from "../components/sound-bar";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({
                 </div>
               </header>
               <main className="flex-1 overflow-y-auto">{children}</main>
+              <SoundBar />
             </SidebarInset>
           </SidebarProvider>
           <Toaster />
