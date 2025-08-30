@@ -19,18 +19,19 @@ export function Logo({ size = 28, withWordmark = true, className }: LogoProps) {
       aria-label="Neutone logo"
       title="Neutone"
     > 
-      <Image src="/logo.svg" alt="Neutone" width={size} height={size} priority />
+      <div className="text-black dark:text-white">
+        <Image src="/logo.svg" alt="Neutone" width={size} height={size} priority />
+      </div>
       {withWordmark && (
         <span
           className={[
             "font-black uppercase font-inter leading-none",
             "tracking-[0.22em]",
-            "drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]",
+            "text-black dark:text-white",
             textSizeClass,
           ].join(" ")}
         >
-          <span className="inline-block bg-gradient-to-r from-indigo-500 via-indigo-400 to-indigo-300 bg-clip-text text-transparent">NEU</span>
-          <span className="inline-block bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-400 bg-clip-text text-transparent">TONE</span>
+          NEUTONE
         </span>
       )}
     </div>

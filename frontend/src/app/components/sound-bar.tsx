@@ -1,7 +1,19 @@
 "use client";
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { Download, MoreHorizontal, Music, Pause, Play, Volume2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import {
+  Download,
+  MoreHorizontal,
+  Music,
+  Pause,
+  Play,
+  Volume2,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -18,44 +30,77 @@ export default function SoundBar() {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(()=>{
+
+  // For audio timing and duration
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-  },[track])
 
+    const updateTime = () => setCurrentTime(audio.currentTime);
 
+    const updateDuration = () => {
+      if (!isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
+    };
+    const handleTrackEnd = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    }
+
+    audio.addEventListener("timeupdate", updateTime);
+    audio.addEventListener("loadedmetadata", updateDuration);
+    audio.addEventListener("ended", handleTrackEnd);
+    
+
+    return () => {
+      audio.removeEventListener("timeupdate", updateTime);
+      audio.addEventListener("loadedmetadata", updateDuration);
+      audio.removeEventListener("ended", handleTrackEnd);
+    };
+  }, [track]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume[0]! / 100;
+    }
+  }, [volume]);
+  
+  // For playing the audio
   useEffect(() => {
     if (audioRef.current && track?.url) {
       setCurrentTime(0);
       setDuration(0);
 
       audioRef.current.src = track.url;
-      audioRef.current.load()
+      audioRef.current.load();
 
       const playPromise = audioRef.current.play();
-      if (playPromise !== undefined){
-        playPromise.then(() => {
-          setIsPlaying(true);
-        }).catch((error) => {
-          console.error("Failed to play audio", error);
-          setIsPlaying(false);
-        })
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.error("Failed to play audio", error);
+            setIsPlaying(false);
+          });
       } else {
         setIsPlaying(true);
       }
     }
-  },[track])
+  }, [track]);
 
-  const formatTime = (time: number) =>{
+  const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  }
+  };
 
   const togglePlay = () => {
     if (!track?.url || !audioRef.current) return;
 
-    if(isPlaying){
+    if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
@@ -64,17 +109,20 @@ export default function SoundBar() {
         .then(() => setIsPlaying(true))
         .catch(() => setIsPlaying(false));
     }
-  }
+  };
 
   const handleSeek = (value: number[]) => {
     if (!track?.url) return;
     const next = value?.[0] ?? 0;
-    if (audioRef.current){
+    if (audioRef.current) {
       audioRef.current.currentTime = next;
     }
     setCurrentTime(next);
-  }
+  };
 
+  if (!track?.url) return null;
+
+  // For audio state and display
   return (
     <div className="px-2 pb-2">
       <Card className="bg-background/60 relative w-full shrink-0 border-t px-4 backdrop-blur">
@@ -107,11 +155,7 @@ export default function SoundBar() {
 
             {/* Controls */}
             <div className="absolute left-1/2 -translate-x-1/2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={togglePlay}
-              >
+              <Button variant="ghost" size="icon" onClick={togglePlay}>
                 {isPlaying ? (
                   <Pause className="h-4 w-4" />
                 ) : (
@@ -133,32 +177,41 @@ export default function SoundBar() {
                 />
               </div>
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="hover:bg-muted/60" aria-label="More options">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" sideOffset={6} className="min-w-36">
-                      <DropdownMenuItem
-                        className="flex items-center gap-2"
-                        disabled={!track?.url}
-                        onClick={() => {
-                          if (!track?.url) return;
-                          window.open(track?.url, "_blank");
-                        }}
-                       >
-                        <Download className="font-semibold h-4 w-4" />
-                        <span>Download</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-muted/60"
+                    aria-label="More options"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  sideOffset={6}
+                  className="min-w-36"
+                >
+                  <DropdownMenuItem
+                    className="flex items-center gap-2"
+                    disabled={!track?.url}
+                    onClick={() => {
+                      if (!track?.url) return;
+                      window.open(track?.url, "_blank");
+                    }}
+                  >
+                    <Download className="h-4 w-4 font-semibold" />
+                    <span>Download</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
           {/* Track Seeker */}
           <div className="flex items-center gap-1">
-            <span className="w-8 text-right text-[10px] text-muted-foreground">
+            <span className="text-muted-foreground w-8 text-right text-[10px]">
               {formatTime(currentTime)}
             </span>
             <Slider
@@ -169,16 +222,14 @@ export default function SoundBar() {
               onValueChange={handleSeek}
               className="flex-1"
             />
-            <span className="w-8 text-left text-[10px] text-muted-foreground">
+            <span className="text-muted-foreground w-8 text-left text-[10px]">
               {formatTime(duration)}
             </span>
           </div>
         </div>
-          {
-            track?.url &&(
-              <audio src={track?.url} ref={audioRef} preload="metadata"/>
-            )
-          }
+        {track?.url && (
+          <audio src={track?.url} ref={audioRef} preload="metadata" />
+        )}
       </Card>
     </div>
   );

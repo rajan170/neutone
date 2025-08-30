@@ -2,12 +2,12 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "~/lib/auth";
 
-import { SongPanel } from "~/app/components/create/song-panel";
 import { Suspense } from "react";
+import { SongPanel } from "~/app/components/create/song-panel";
 import TrackListFetcher from "~/app/components/create/track-list-fetcher";
 import { LoaderFive as Loader } from "~/components/ui/loader";
 
-export default async function HomePage() {
+export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
