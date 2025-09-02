@@ -640,11 +640,11 @@ export default function TracksList({ tracks }: { tracks: Track[] }) {
                           </Button>
 
                           <DropdownMenu>
-                            <DropdownMenuTrigger>
+                            <DropdownMenuTrigger asChild>
                               <Button
                                 variant="ghost"
-                                size="sm"
-                                className="ml-2 w-full border-emerald-300 bg-emerald-50 text-emerald-700 shadow-sm hover:scale-105 hover:bg-emerald-100 active:scale-95 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-950/70"
+                                size="icon"
+                                className="ml-2 border-emerald-300 bg-emerald-50 text-emerald-700 shadow-sm hover:scale-105 hover:bg-emerald-100 active:scale-95 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-950/70"
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
