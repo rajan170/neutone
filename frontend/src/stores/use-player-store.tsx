@@ -2,11 +2,11 @@ import { create } from "zustand";
 
 interface PlayerTrack{
     id: string;
-    title: string;
-    url: string;
-    artwork: string;
-    prompt: string;
-    author: string;
+    title: string | null;
+    url: string | null;
+    artwork?: string | null;
+    prompt: string | null;
+    author: string | null;
 }
 
 interface PlayerState{

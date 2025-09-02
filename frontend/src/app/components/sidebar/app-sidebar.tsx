@@ -15,7 +15,6 @@ import Upgrade from "./upgrade"
 import Logo from "./logo"
 
 
-
 export async function AppSidebar() {
   return (
     <Sidebar>

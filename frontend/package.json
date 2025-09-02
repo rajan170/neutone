@@ -1,5 +1,5 @@
 {
-  "name": "nuetone",
+  "name": "neutone",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -25,6 +25,8 @@
     "@aws-sdk/client-s3": "^3.873.0",
     "@aws-sdk/s3-request-presigner": "^3.873.0",
     "@daveyplate/better-auth-ui": "^3.0.2",
+    "@geist-ui/core": "^2.3.8",
+    "@geist-ui/icons": "^1.0.2",
     "@prisma/client": "^6.14.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -44,6 +46,7 @@
     "inngest": "^3.40.1",
     "inngest-cli": "^1.11.5",
     "lucide-react": "^0.539.0",
+    "motion": "^12.23.12",
     "next": "^15.2.3",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",

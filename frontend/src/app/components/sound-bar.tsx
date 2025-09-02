@@ -133,7 +133,7 @@ export default function SoundBar() {
                 {track?.artwork ? (
                   <Image
                     src={track.artwork}
-                    alt={track.title}
+                    alt={track.title!}
                     fill
                     sizes="40px"
                     className="object-cover"
