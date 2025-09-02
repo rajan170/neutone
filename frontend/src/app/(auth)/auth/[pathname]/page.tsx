@@ -1,5 +1,6 @@
 import { AuthView } from "@daveyplate/better-auth-ui"
 import { authViewPaths } from "@daveyplate/better-auth-ui/server"
+// import { AuthView } from "./view"
 
 export const dynamicParams = false
 

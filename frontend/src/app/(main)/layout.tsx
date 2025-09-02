@@ -33,7 +33,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Neutone",
-  description: "Music Generation Tool",
+  description: "Music Generation AI",
   icons: [
     { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
     { rel: "icon", url: "/favicon.ico" },
