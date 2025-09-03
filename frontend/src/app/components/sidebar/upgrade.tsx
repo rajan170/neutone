@@ -2,11 +2,23 @@
 
 import { Button } from "~/components/ui/button";
 import { Zap } from "lucide-react";
+import { authClient } from "~/lib/auth-client";
+import { smallCreditsProductId, mediumCreditsProductId, largeCreditsProductId } from "~/lib/auth-constants";
 
 export default function Upgrade() {
+    const upgrade = async () => {
+        await authClient.checkout({
+            products: [
+                smallCreditsProductId,
+                mediumCreditsProductId,
+                largeCreditsProductId
+            ]
+        });
+    }
     return (
         <Button
             variant="outline"
+            onClick={upgrade}
             size="sm"
             className="group relative overflow-hidden px-2 py-2 h-auto text-black border-0 transition-all duration-300 font-semibold rounded-lg text-sm shadow-md hover:shadow-lg hover:text-black hover:scale-[1.02] bg-gradient-to-r from-amber-50 to-yellow-50 hover:from-amber-100 hover:to-yellow-100 dark:from-amber-950/50 dark:to-yellow-950/50 dark:hover:from-amber-900/60 dark:hover:to-yellow-900/60"
         >

@@ -59,7 +59,7 @@ export default function Footer() {
           ))}
         </div>
         <p className="text-muted-foreground mt-10 text-center text-xs leading-5">
-          &copy; 2024 Neutone, Inc. All rights reserved.
+          &copy; 2025 Neutone, Inc. All rights reserved.
         </p>
       </div>
     </footer>
