@@ -1,6 +1,6 @@
 "use client";
 
-import { type Song } from "@prisma/client";
+import { type Like, type Song } from "@prisma/client";
 import { Heart, Loader2, Music, Music2, Play } from "lucide-react";
 import { useState } from "react";
 import { getPlayUrl } from "~/actions/generate";
@@ -14,12 +14,13 @@ export type SongWithRelations = Song & {
   };
   categories: { name: string }[];
   thumbnailUrl?: string | null;
+  likes: Like[];
 };
 
 export function SongCard({ song }: { song: SongWithRelations }) {
   const [isLoading, setIsLoading] = useState(false);
   const setTrack = usePlayerStore((state) => state.setTrack);
-  const [isLiked, setIsLiked] = useState(song._count.likes > 0 ? true : false);
+  const [isLiked, setIsLiked] = useState(song.likes ? song.likes.length > 0 : false);
   const [likesCount, setLikesCount] = useState(song._count.likes);
 
   const handlePlay = async () => {
@@ -49,7 +50,7 @@ export function SongCard({ song }: { song: SongWithRelations }) {
   return (
     <div
       onClick={handlePlay}
-      className="cursor-pointer rounded-lg border border-gray-400 p-2 shadow-md transition-shadow duration-300 group-hover:shadow-lg hover:shadow-lg"
+      className="cursor-pointer mb-4 rounded-lg border border-gray-400 p-2 shadow-md transition-shadow duration-300 group-hover:shadow-lg hover:shadow-lg"
     >
       <div className="group relative aspect-square overflow-hidden rounded-md bg-gray-200 transition-opacity duration-300 group-hover:opacity-75">
         {song.thumbnailUrl ? (

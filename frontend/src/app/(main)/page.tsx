@@ -1,6 +1,5 @@
-import { Link, Music } from "lucide-react";
+import { Music } from "lucide-react";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 import { getPresignedUrl } from "~/actions/generate";
 
@@ -8,15 +7,14 @@ import { auth } from "~/lib/auth";
 import { db } from "~/server/db";
 import { SongCard } from "../components/home/song-card";
 import { type SongWithRelations } from "../components/home/song-card";
+import Hero from "../components/marketing/hero";
 
 export default async function HomePage() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
-    redirect("/auth/sign-in");
+    return <Hero />;
   }
-
-  const userId = session?.user.id;
 
   const songs = await db.song.findMany({
     where: {
@@ -34,6 +32,11 @@ export default async function HomePage() {
         },
       },
       categories: true,
+      likes: session.user.id ? {
+        where: {
+          userId: session.user.id,
+        },
+      } : false,
     },
     orderBy: {
       createdAt: "desc",
@@ -53,9 +56,6 @@ export default async function HomePage() {
     }),
   );
 
-  const twoDaysAgo = new Date();
-  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -63,9 +63,9 @@ export default async function HomePage() {
     .filter((song) => song.createdAt > thirtyDaysAgo)
     .slice(0, 100);
 
-  const mostLikedSongs = songsWithUrls
-    .sort((a, b) => b._count.likes - a._count.likes)
-    .slice(0, 100);
+  // const mostLikedSongs = songsWithUrls
+  //   .sort((a, b) => b._count.likes - a._count.likes)
+  //   .slice(0, 100);
 
   const trendingSongIds = new Set(trendingSongs.map((song) => song.id));
 

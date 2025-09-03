@@ -1,4 +1,4 @@
-import { AccountView } from "@daveyplate/better-auth-ui"
+import { AccountViewClient } from "./view"
 import { accountViewPaths } from "@daveyplate/better-auth-ui/server"
 
 export const dynamicParams = false
@@ -10,5 +10,5 @@ export function generateStaticParams() {
 export default async function AccountPage({ params }: { params: Promise<{ pathname: string }> }) {
     const { pathname } = await params
     
-    return <AccountView pathname={pathname} />
+    return <AccountViewClient pathname={pathname} />
 }

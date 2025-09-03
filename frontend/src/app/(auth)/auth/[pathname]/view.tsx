@@ -1,6 +1,5 @@
 "use client";
 
-import { AuthView } from "@daveyplate/better-auth-ui";
 import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";

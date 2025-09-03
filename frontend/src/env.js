@@ -22,6 +22,7 @@ export const env = createEnv({
     GENERATE_FROM_LYRICS_ENDPOINT: z.string(),
     BETTER_AUTH_SECRET: z.string(),
     BETTER_AUTH_URL: z.string(),
+    POLAR_ACCESS_TOKEN: z.string(),
   },
 
   /**
@@ -51,6 +52,7 @@ export const env = createEnv({
     GENERATE_FROM_LYRICS_ENDPOINT: process.env.GENERATE_FROM_LYRICS_ENDPOINT,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+    POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

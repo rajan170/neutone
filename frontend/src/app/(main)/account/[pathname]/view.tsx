@@ -1,18 +1,18 @@
 "use client";
 
-import { AccountView } from "@daveyplate/better-auth-ui";
+import { AccountView as BAAccountView } from "@daveyplate/better-auth-ui";
 import { ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 
-export function AccountView({ pathname }: { pathname: string }) {
+export function AccountViewClient({ pathname }: { pathname: string }) {
   const router = useRouter();
 
   return (
     <main className="container flex grow flex-col items-center justify-center gap-3 self-center p-4 md:p-6">
       {["settings", "security", "api-keys", "organizations"].includes(pathname) && (
         <Button
-          className="self-start"
+          className="self-start border border-b"
           variant="outline"
           onClick={() => router.back()}
         >
@@ -20,7 +20,7 @@ export function AccountView({ pathname }: { pathname: string }) {
           Back
         </Button>
       )}
-      <AccountView pathname={pathname} />
+      <BAAccountView pathname={pathname} />
     </main>
   );
 }

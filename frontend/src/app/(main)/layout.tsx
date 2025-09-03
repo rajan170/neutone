@@ -4,6 +4,8 @@ import { type Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
 import { Providers } from "../components/providers";
 import { Toaster } from "sonner";
+import { headers } from "next/headers";
+import { auth } from "~/lib/auth";
 import {
   SidebarInset,
   SidebarProvider,
@@ -40,9 +42,24 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) {
+    return (
+      <html lang="en" className={`${geist.variable} ${inter.variable}`}>
+        <body>
+          <Providers>
+            <main className="min-h-screen">{children}</main>
+            <Toaster />
+          </Providers>
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="en" className={`${geist.variable} ${inter.variable}`}>
       <body>
