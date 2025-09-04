@@ -18,6 +18,9 @@ db.sqlite
 /out/
 next-env.d.ts
 
+# open-next build artifacts
+/.open-next/
+
 # production
 /build
 
