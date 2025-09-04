@@ -60,9 +60,9 @@ const nextConfig = {
             config.externals.push('sqlite3', 'node:sqlite');
         }
 
-        // Disable minification completely to work around webpack issue  
-        config.optimization = config.optimization || {};
-        config.optimization.minimize = false;
+        // Re-enable minification for better production performance
+        // config.optimization = config.optimization || {};
+        // config.optimization.minimize = false;
 
         return config;
     },
