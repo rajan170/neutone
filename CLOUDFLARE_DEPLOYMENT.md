@@ -50,7 +50,7 @@ npx wrangler pages project create neutone
 
 Go to your Cloudflare Pages dashboard:
 1. Navigate to **Pages** > **neutone** > **Settings** > **Environment variables**
-2. Add the following environment variables (refer to `cloudflare-env-vars.md` for details):
+2. Add the following environment variables:
 
 ### Production Environment Variables
 ```
@@ -66,8 +66,12 @@ MODAL_SECRET=your-modal-secret
 GENERATE_FROM_DESCRIPTION_ENDPOINT=https://your-modal-app--generate-from-description.modal.run
 GENERATE_FROM_DESCRIBED_LYRICS_ENDPOINT=https://your-modal-app--generate-from-described-lyrics.modal.run
 GENERATE_FROM_LYRICS_ENDPOINT=https://your-modal-app--generate-from-lyrics.modal.run
+POLAR_ACCESS_TOKEN=your-polar-access-token
+POLAR_WEBHOOK_SECRET=your-polar-webhook-secret
 NODE_ENV=production
 ```
+
+**Important**: All these environment variables are required for the build to succeed. Make sure to set them all in the Cloudflare Pages dashboard before deploying.
 
 ## Step 5: Deploy Your Application
 
@@ -147,18 +151,24 @@ The following npm scripts have been added to your `package.json`:
 1. **Environment Variables Not Loading**
    - Ensure all variables are set in the Cloudflare Pages dashboard
    - Check that variable names match exactly (case-sensitive)
+   - All environment variables listed above are required for the build to succeed
 
-2. **Database Connection Issues**
+2. **Build Failures**
+   - The build will fail if any required environment variables are missing
+   - Check the build logs in Cloudflare Pages dashboard for specific error messages
+   - Make sure all Modal endpoints are accessible and working
+
+3. **Database Connection Issues**
    - Verify your DATABASE_URL is correct
    - Ensure your database accepts connections from Cloudflare's network
    - Consider using connection pooling (PgBouncer) for better performance
 
-3. **S3 Images Not Loading**
+4. **S3 Images Not Loading**
    - Check your S3 bucket CORS configuration
    - Verify the bucket name and region in environment variables
    - Ensure your AWS credentials have the necessary permissions
 
-4. **Modal Endpoints Not Working**
+5. **Modal Endpoints Not Working**
    - Verify your Modal endpoints are deployed and accessible
    - Check that MODAL_KEY and MODAL_SECRET are correct
    - Test the endpoints directly to ensure they're working

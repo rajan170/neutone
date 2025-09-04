@@ -1,6 +1,9 @@
 name = "neutone"
 compatibility_date = "2024-12-01"
 
+# Cloudflare Pages configuration
+pages_build_output_dir = ".vercel/output/static"
+
 # Environment variables
 [vars]
 NODE_ENV = "production"
@@ -17,3 +20,5 @@ NODE_ENV = "production"
 # - GENERATE_FROM_DESCRIPTION_ENDPOINT
 # - GENERATE_FROM_DESCRIBED_LYRICS_ENDPOINT
 # - GENERATE_FROM_LYRICS_ENDPOINT
+# - POLAR_ACCESS_TOKEN
+# - POLAR_WEBHOOK_SECRET
