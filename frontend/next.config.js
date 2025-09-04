@@ -1,4 +1,9 @@
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+// Resolve path relative to this config file (ESM-safe)
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -19,21 +24,21 @@ const nextConfig = {
     },
     // Webpack configuration for production builds only
     webpack: (config, { isServer, dev }) => {
-        // Skip webpack config when using Turbopack in development
+        // Ensure TS path aliases (~/* and @/*) in all modes
+        config.resolve.alias = {
+            ...(config.resolve.alias || {}),
+            '~': path.resolve(__dirname, 'src'),
+            '@': path.resolve(__dirname, 'src'),
+        };
+
+        // Skip the rest when using Turbopack in development
         if (dev) return config;
-        
+
         // Handle node: modules for production builds
         config.resolve.fallback = {
             ...config.resolve.fallback,
             sqlite3: false,
             'node:sqlite': false,
-        };
-
-        // Ensure TS path aliases (~/* and @/*) work in production builds
-        config.resolve.alias = {
-            ...(config.resolve.alias || {}),
-            '~': path.resolve(process.cwd(), 'src'),
-            '@': path.resolve(process.cwd(), 'src'),
         };
 
         // External packages that should not be bundled
