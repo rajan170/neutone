@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "~/components/ui/button";
+import { Button } from "../../../components/ui/button";
 import { Zap } from "lucide-react";
-import { authClient } from "~/lib/auth-client";
-import { smallCreditsProductId, mediumCreditsProductId, largeCreditsProductId } from "~/lib/auth-constants";
+import { authClient } from "../../../lib/auth-client";
+import { smallCreditsProductId, mediumCreditsProductId, largeCreditsProductId } from "../../../lib/auth-constants";
 
 export default function Upgrade() {
     const upgrade = async () => {

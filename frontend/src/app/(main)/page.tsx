@@ -9,7 +9,8 @@ import { SongCard } from "../components/home/song-card";
 import { type SongWithRelations } from "../components/home/song-card";
 import Hero from "../components/marketing/hero";
 
-export const runtime = "edge"
+// Use Node.js runtime for better-auth compatibility
+export const runtime = "nodejs"
 
 
 export default async function HomePage() {

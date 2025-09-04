@@ -2,7 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import { authClient } from "~/lib/auth-client";
+import { authClient } from "../../lib/auth-client";
 
 export default function DashboardRedirect() {
   useEffect(() => {

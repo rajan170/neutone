@@ -5,7 +5,8 @@ import { redirect } from "next/navigation"
 import { auth } from "~/lib/auth"
 // import { AuthView } from "./view"
 
-export const runtime = "edge"
+// Use Node.js runtime for full better-auth compatibility with Polar plugins
+export const runtime = "nodejs"
 
 export const dynamicParams = false
 

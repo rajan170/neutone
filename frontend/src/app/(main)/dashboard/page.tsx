@@ -3,7 +3,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import DashboardRedirect from "~/app/components/dashboard-redirect";
 
-export const runtime = "edge"
+// Use Node.js runtime for better-auth compatibility
+export const runtime = "nodejs"
 
 
 export default async function Page() {

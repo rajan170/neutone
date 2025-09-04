@@ -1,7 +1,8 @@
 import { AccountViewClient } from "./view"
 import { accountViewPaths } from "@daveyplate/better-auth-ui/server"
 
-export const runtime = "edge"
+// Use Node.js runtime for full better-auth compatibility with Polar plugins
+export const runtime = "nodejs"
 
 export const dynamicParams = false
 

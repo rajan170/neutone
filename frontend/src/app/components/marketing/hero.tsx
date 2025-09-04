@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Play, Music, Sparkles, Zap, Headphones, Mic } from "lucide-react";
-import { BackgroundGradient } from "~/components/ui/background-gradient";
-import { buttonVariants } from "~/components/ui/button";
-import { cn } from "~/lib/utils";
+import { BackgroundGradient } from "../../../components/ui/background-gradient";
+import { buttonVariants } from "../../../components/ui/button";
+import { cn } from "../../../lib/utils";
 import Navbar from "./navbar";
 import Features from "./features";
 import CTA from "./cta";
