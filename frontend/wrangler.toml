@@ -1,10 +1,5 @@
 name = "neutone"
 compatibility_date = "2024-12-01"
-main = ".open-next/worker.js"
-
-# OpenNext configuration
-[build]
-command = "bun run build:worker"
 
 # Environment variables
 [vars]

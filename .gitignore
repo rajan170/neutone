@@ -344,3 +344,5 @@ logs
 
 # generated audio files
 *.wav
+
+.next/
