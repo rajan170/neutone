@@ -9,6 +9,9 @@ import { SongCard } from "../components/home/song-card";
 import { type SongWithRelations } from "../components/home/song-card";
 import Hero from "../components/marketing/hero";
 
+export const runtime = "edge"
+
+
 export default async function HomePage() {
   const session = await auth.api.getSession({ headers: await headers() });
 

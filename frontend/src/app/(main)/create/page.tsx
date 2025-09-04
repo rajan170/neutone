@@ -7,6 +7,9 @@ import { SongPanel } from "~/app/components/create/song-panel";
 import TrackListFetcher from "~/app/components/create/track-list-fetcher";
 import { LoaderFive as Loader } from "~/components/ui/loader";
 
+export const runtime = "edge"
+
+
 export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
 

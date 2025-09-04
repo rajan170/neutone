@@ -1,22 +1,17 @@
 name = "neutone"
 compatibility_date = "2024-12-01"
-pages_build_output_dir = ".next"
 
+# OpenNext configuration
 [build]
-command = "npm run build"
-cwd = "."
+command = "bun run build:worker"
 
+# Environment variables
 [vars]
 NODE_ENV = "production"
-
-# Cloudflare Pages configuration
-# Environment variables should be set in the Cloudflare dashboard
-# under Pages > Settings > Environment variables
 
 # Required environment variables to set in Cloudflare dashboard:
 # - DATABASE_URL
 # - BETTER_AUTH_SECRET
-# - BETTER_AUTH_URL (https://neutone.app)
 # - AWS_ACCESS_KEY
 # - AWS_SECRET_ACCESS_KEY
 # - AWS_REGION

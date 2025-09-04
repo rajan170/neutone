@@ -5,6 +5,8 @@ import { redirect } from "next/navigation"
 import { auth } from "~/lib/auth"
 // import { AuthView } from "./view"
 
+export const runtime = "edge"
+
 export const dynamicParams = false
 
 export function generateStaticParams() {

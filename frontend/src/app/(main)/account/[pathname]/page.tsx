@@ -1,6 +1,9 @@
 import { AccountViewClient } from "./view"
 import { accountViewPaths } from "@daveyplate/better-auth-ui/server"
 
+export const runtime = "edge"
+
+
 export const dynamicParams = false
 
 export function generateStaticParams() {

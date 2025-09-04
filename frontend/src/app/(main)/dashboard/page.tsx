@@ -3,6 +3,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import DashboardRedirect from "~/app/components/dashboard-redirect";
 
+export const runtime = "edge"
+
+
 export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
 
