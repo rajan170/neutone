@@ -9,11 +9,7 @@ const __dirname = path.dirname(__filename)
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     serverExternalPackages: ['@prisma/client', 'prisma', 'better-auth'],
-    // Use static export for Cloudflare Pages compatibility
-    output: 'export',
-    trailingSlash: true,
     images: {
-        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',
