@@ -17,9 +17,16 @@ const nextConfig = {
             },
         ],
     },
-    // Turbopack configuration (replaces deprecated experimental.turbo)
-    turbopack: {
-        // letting it handle module resolution naturally
+    // Enable Turbopack for production builds
+    experimental: {
+        turbo: {
+            rules: {
+                '*.svg': {
+                    loaders: ['@svgr/webpack'],
+                    as: '*.js',
+                },
+            },
+        },
     },
     // Webpack configuration for production builds only
     webpack: (config, { isServer, dev }) => {
