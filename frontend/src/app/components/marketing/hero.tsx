@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Play, Music, Sparkles, Zap, Headphones, Mic } from "lucide-react";
-import { BackgroundGradient } from "../../../components/ui/background-gradient";
-import { buttonVariants } from "../../../components/ui/button";
-import { cn } from "../../../lib/utils";
+import { BackgroundGradient } from "~/components/ui/background-gradient";
+import { buttonVariants } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
 import Navbar from "./navbar";
 import Features from "./features";
 import CTA from "./cta";
@@ -13,20 +13,17 @@ import Footer from "./footer";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }
+  animate: { opacity: 1, y: 0 }
 };
 
 const fadeInLeft = {
   initial: { opacity: 0, x: -60 },
-  animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }
+  animate: { opacity: 1, x: 0 }
 };
 
 const fadeInRight = {
   initial: { opacity: 0, x: 60 },
-  animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }
+  animate: { opacity: 1, x: 0 }
 };
 
 const staggerContainer = {
@@ -39,8 +36,7 @@ const staggerContainer = {
 
 const scaleIn = {
   initial: { opacity: 0, scale: 0.8 },
-  animate: { opacity: 1, scale: 1 },
-  transition: { duration: 1, ease: [0.6, -0.05, 0.01, 0.99] }
+  animate: { opacity: 1, scale: 1 }
 };
 
 export default function Hero() {
@@ -59,6 +55,7 @@ export default function Hero() {
           >
             <motion.div
               variants={fadeInUp}
+              transition={{ duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }}
               className="flex items-center gap-2 mb-8"
             >
               <motion.div 
@@ -80,6 +77,7 @@ export default function Hero() {
             
             <motion.h1 
               variants={fadeInUp}
+              transition={{ duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }}
               className="text-4xl font-bold tracking-tight sm:text-6xl md:text-8xl leading-[1.1] mb-6"
             >
               Create{" "}
@@ -99,6 +97,7 @@ export default function Hero() {
             
             <motion.p 
               variants={fadeInUp}
+              transition={{ duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }}
               className="text-muted-foreground mt-6 text-xl leading-relaxed sm:text-2xl max-w-xl"
             >
               Transform your ideas into professional tracks in minutes. 
