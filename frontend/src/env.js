@@ -1,5 +1,9 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
+// Best-effort dotenv preload for local builds or environments where a .env file exists.
+// This won't affect Cloudflare if no .env file is present.
+import dotenv from "dotenv";
+dotenv.config();
 
 export const env = createEnv({
   /**
@@ -58,6 +62,8 @@ export const env = createEnv({
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
    */
+  // Allow skipping validation during CF Pages/Vercel builds when envs are provided at runtime.
+  // Prefer setting SKIP_ENV_VALIDATION=true in the build environment (wrangler/Pages vars).
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   /**
    * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and

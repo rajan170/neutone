@@ -7,6 +7,7 @@ pages_build_output_dir = ".vercel/output/static"
 # Environment variables
 [vars]
 NODE_ENV = "production"
+SKIP_ENV_VALIDATION = "true"
 
 # Required environment variables to set in Cloudflare dashboard:
 # - DATABASE_URL
