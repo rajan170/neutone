@@ -11,7 +11,7 @@ export default function Upgrade() {
             products: [
                 smallCreditsProductId,
                 mediumCreditsProductId,
-                largeCreditsProductId
+                largeCreditsProductId 
             ]
         });
     }

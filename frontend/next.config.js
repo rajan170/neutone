@@ -7,14 +7,14 @@ import "./src/env.js";
 /** @type {import("next").NextConfig} */
 const config = {
     images: {
-        remotePatterns: [
+        remotePatterns: process.env.S3_BUCKET_NAME && process.env.AWS_REGION ? [
             {
                 protocol: 'https',
                 hostname: `${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`,
                 port: '',
                 pathname: '/**',
             },
-        ],
+        ] : [],
     },
 };
 

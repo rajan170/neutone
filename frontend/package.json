@@ -19,7 +19,11 @@
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:worker": "cloudfare",
+    "dev:worker": "wrangler dev --port 8871",
+    "preview:worker": "bun run build:worker && bun run dev:worker",
+    "deploy:worker": "bun run build:worker && wrangler deploy"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
@@ -61,6 +65,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@opennextjs/cloudflare": "^1.7.1",
     "@tailwindcss/postcss": "^4.0.15",
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",
