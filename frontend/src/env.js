@@ -2,8 +2,14 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 // Best-effort dotenv preload for local builds or environments where a .env file exists.
 // This won't affect Cloudflare if no .env file is present.
-import dotenv from "dotenv";
-dotenv.config();
+try {
+  // Only try to load dotenv in Node.js environments (not edge runtime)
+  if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+    require('dotenv').config();
+  }
+} catch (error) {
+  // Silently fail - this is expected in edge runtimes like Cloudflare
+}
 
 export const env = createEnv({
   /**
