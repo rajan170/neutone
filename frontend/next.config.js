@@ -28,8 +28,21 @@ const nextConfig = {
         config.resolve.alias = {
             ...(config.resolve.alias || {}),
             '~': path.resolve(__dirname, 'src'),
+            '~/': path.resolve(__dirname, 'src'),
             '@': path.resolve(__dirname, 'src'),
+            '@/': path.resolve(__dirname, 'src'),
+            // Specific subpath aliases for robustness in various bundlers
+            '~/app': path.resolve(__dirname, 'src/app'),
+            '~/components': path.resolve(__dirname, 'src/components'),
+            '~/lib': path.resolve(__dirname, 'src/lib'),
+            '~/server': path.resolve(__dirname, 'src/server'),
+            '~/actions': path.resolve(__dirname, 'src/actions'),
+            '~/stores': path.resolve(__dirname, 'src/stores'),
+            '~/inngest': path.resolve(__dirname, 'src/inngest'),
+            '~/env': path.resolve(__dirname, 'src/env'),
         };
+
+        // Note: Avoid extra plugins to keep lockfile unchanged in CF builds
 
         // Skip the rest when using Turbopack in development
         if (dev) return config;
