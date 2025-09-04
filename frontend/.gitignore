@@ -49,3 +49,7 @@ yarn-error.log*
 .idea
 
 .next/
+
+.claude/ 
+.vercel/
+.open-next/

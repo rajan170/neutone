@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+// Use system fonts in restricted build environments
 import { Providers } from "~/app/components/providers";
 import { Toaster } from "sonner";
 
@@ -14,16 +14,13 @@ export const metadata: Metadata = {
   ],
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
+// Removed next/font/google (network fetch at build time).
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en">
       <body className="min-h-svh flex flex-col items-center justify-center">
         <Providers>{children}
           <Toaster />

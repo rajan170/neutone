@@ -3,8 +3,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import DashboardRedirect from "~/app/components/dashboard-redirect";
 
-// Use Node.js runtime for better-auth compatibility
-export const runtime = "nodejs"
+// Use Edge runtime for Cloudflare Pages compatibility
+export const runtime = "edge"
 
 
 export default async function Page() {

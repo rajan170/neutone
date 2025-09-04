@@ -45,7 +45,7 @@ export const auth = betterAuth({
                 }),
                 portal(),
                 webhooks({
-                    secret: env.POLAR_WEBHOOK_SECRET,
+                    secret: env.POLAR_WEBHOOK_SECRET!,
                     onOrderPaid: async (payload) => {
                         const externalCustomerId = payload.data.customer.externalId;
 
@@ -89,4 +89,3 @@ export const auth = betterAuth({
         })
     ],
 });
-

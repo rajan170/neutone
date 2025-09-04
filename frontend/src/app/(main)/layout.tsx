@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist, Inter } from "next/font/google";
+// Use system fonts in restricted build environments
 import { Providers } from "../components/providers";
 import { Toaster } from "sonner";
 import { headers } from "next/headers";
@@ -22,16 +22,7 @@ import { Separator } from "~/components/ui/separator";
 import BreadcrumbPageClient from "../components/sidebar/breadcrumb-page-client";
 import SoundBar from "../components/sound-bar";
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
+// Removed next/font/google (network fetch at build time).
 
 export const metadata: Metadata = {
   title: "Neutone",
@@ -49,7 +40,7 @@ export default async function RootLayout({
 
   if (!session) {
     return (
-      <html lang="en" className={`${geist.variable} ${inter.variable}`}>
+      <html lang="en">
         <body>
           <Providers>
             <main className="min-h-screen">{children}</main>
@@ -61,7 +52,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" className={`${geist.variable} ${inter.variable}`}>
+    <html lang="en">
       <body>
         <Providers>
           <SidebarProvider>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -16,12 +17,12 @@ const nextConfig = {
             },
         ],
     },
-    // Enable Turbopack for development
-    experimental: {
-        turbo: {
-            // Turbopack configuration - letting it handle module resolution naturally
-        },
+    // Turbopack configuration (replaces deprecated experimental.turbo)
+    turbopack: {
+        // letting it handle module resolution naturally
     },
+    // Output configuration for Cloudflare Pages
+    output: 'standalone',
     // Webpack configuration for production builds only
     webpack: (config, { isServer, dev }) => {
         // Ensure TS path aliases (~/* and @/*) in all modes
@@ -34,6 +35,7 @@ const nextConfig = {
             // Specific subpath aliases for robustness in various bundlers
             '~/app': path.resolve(__dirname, 'src/app'),
             '~/components': path.resolve(__dirname, 'src/components'),
+            'src/app': path.resolve(__dirname, 'src/app'),
             '~/lib': path.resolve(__dirname, 'src/lib'),
             '~/server': path.resolve(__dirname, 'src/server'),
             '~/actions': path.resolve(__dirname, 'src/actions'),
@@ -47,22 +49,42 @@ const nextConfig = {
         // Skip the rest when using Turbopack in development
         if (dev) return config;
 
-        // Handle node: modules for production builds
-        config.resolve.fallback = {
-            ...config.resolve.fallback,
-            sqlite3: false,
-            'node:sqlite': false,
-        };
-
-        // External packages that should not be bundled
+        // Treat certain native deps as commonjs externals to avoid invalid
+        // code generation like "module.exports = node:sqlite" in edge builds.
         config.externals = config.externals || [];
-        if (isServer) {
-            config.externals.push('sqlite3', 'node:sqlite');
-        }
+        const makeCommonJsExternal = (request) => `commonjs ${request}`;
+        config.externals.push((ctx, callback) => {
+            const req = ctx?.request;
+            if (req === 'sqlite3' || req === 'node:sqlite') {
+                return callback(null, makeCommonJsExternal(req));
+            }
+            return callback();
+        });
 
-        // Re-enable minification for better production performance
-        // config.optimization = config.optimization || {};
-        // config.optimization.minimize = false;
+        // Add better handling for esbuild issues in Cloudflare Pages
+        if (process.env.NODE_ENV === 'production') {
+            // Ensure proper module resolution
+            config.resolve.fallback = {
+                ...config.resolve.fallback,
+                fs: false,
+                net: false,
+                tls: false,
+                crypto: false,
+                stream: false,
+                util: false,
+                buffer: false,
+                process: false,
+            };
+
+            // Add better externals handling for problematic modules
+            config.externals.push((ctx, callback) => {
+                const req = ctx?.request;
+                if (req && (req.startsWith('node:') || req === 'async_hooks' || req === 'buffer' || req === 'crypto' || req === 'stream' || req === 'util' || req === 'process')) {
+                    return callback(null, makeCommonJsExternal(req));
+                }
+                return callback();
+            });
+        }
 
         return config;
     },

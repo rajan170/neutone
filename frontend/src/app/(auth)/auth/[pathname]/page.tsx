@@ -5,8 +5,8 @@ import { redirect } from "next/navigation"
 import { auth } from "~/lib/auth"
 // import { AuthView } from "./view"
 
-// Use Node.js runtime for full better-auth compatibility with Polar plugins
-export const runtime = "nodejs"
+// Use Edge runtime for Cloudflare Pages compatibility
+export const runtime = "edge"
 
 export const dynamicParams = false
 

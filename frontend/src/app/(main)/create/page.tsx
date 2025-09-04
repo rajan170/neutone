@@ -7,8 +7,8 @@ import { SongPanel } from "~/app/components/create/song-panel";
 import TrackListFetcher from "~/app/components/create/track-list-fetcher";
 import { LoaderFive as Loader } from "~/components/ui/loader";
 
-// Use Node.js runtime for better-auth compatibility
-export const runtime = "nodejs"
+// Use Edge runtime for Cloudflare Pages compatibility
+export const runtime = "edge"
 
 
 export default async function Page() {
