@@ -2,7 +2,7 @@ name = "neutone"
 compatibility_date = "2024-12-01"
 
 # Cloudflare Pages configuration
-pages_build_output_dir = ".next/standalone"
+pages_build_output_dir = ".next"
 
 
 # Environment variables

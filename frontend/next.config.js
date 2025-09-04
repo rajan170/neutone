@@ -21,8 +21,6 @@ const nextConfig = {
     turbopack: {
         // letting it handle module resolution naturally
     },
-    // Output configuration for Cloudflare Pages
-    output: 'standalone',
     // Webpack configuration for production builds only
     webpack: (config, { isServer, dev }) => {
         // Ensure TS path aliases (~/* and @/*) in all modes
