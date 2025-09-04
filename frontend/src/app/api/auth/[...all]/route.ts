@@ -3,5 +3,6 @@ import { toNextJsHandler } from "better-auth/next-js";
 
 // Use Edge runtime for Cloudflare Pages compatibility
 export const runtime = "edge";
+export const dynamic = "force-static";
 
 export const { POST, GET } = toNextJsHandler(auth);
