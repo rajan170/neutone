@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     serverExternalPackages: ['@prisma/client', 'prisma', 'better-auth'],
@@ -25,6 +27,13 @@ const nextConfig = {
             ...config.resolve.fallback,
             sqlite3: false,
             'node:sqlite': false,
+        };
+
+        // Ensure TS path aliases (~/* and @/*) work in production builds
+        config.resolve.alias = {
+            ...(config.resolve.alias || {}),
+            '~': path.resolve(__dirname, 'src'),
+            '@': path.resolve(__dirname, 'src'),
         };
 
         // External packages that should not be bundled
