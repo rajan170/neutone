@@ -1,8 +1,8 @@
+@import "@daveyplate/better-auth-ui/css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import "@daveyplate/better-auth-ui/css";
 
 @layer base {
   :root {

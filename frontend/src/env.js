@@ -4,7 +4,7 @@ import { z } from "zod";
 
 // Best-effort dotenv preload for local builds (no effect on CF edge if .env absent)
 try {
-  if (typeof process !== "undefined" && process.versions?.node) {
+  if (typeof process !== "undefined" && typeof require !== "undefined") {
     // eslint-disable-next-line global-require
     require("dotenv").config();
   }
