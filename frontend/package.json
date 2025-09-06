@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node -r dotenv/config debug-env.js && bun run next build",
-    "build:cf": "node -r dotenv/config debug-env.js && next build --turbo",
+    "build:cf": "node -r dotenv/config debug-env.js && next build --turbo && npx @cloudflare/next-on-pages",
     "check": "bun run next lint && bun run tsc --noEmit",
     "db:generate": "bun run prisma migrate dev",
     "db:migrate": "bun run prisma migrate deploy",
@@ -73,6 +73,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.16",
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
