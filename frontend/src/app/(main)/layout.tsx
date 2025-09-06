@@ -20,7 +20,7 @@ import {
 } from "~/components/ui/breadcrumb";
 import { Separator } from "~/components/ui/separator";
 import BreadcrumbPageClient from "../components/sidebar/breadcrumb-page-client";
-import SoundBar from "../components/sound-bar";
+import SoundBarWrapper from "../components/sound-bar-wrapper";
 
 // Removed next/font/google (network fetch at build time).
 
@@ -75,7 +75,7 @@ export default async function RootLayout({
                 </div>
               </header>
               <main className="flex-1 overflow-y-auto">{children}</main>
-              <SoundBar />
+              <SoundBarWrapper />
             </SidebarInset>
           </SidebarProvider>
           <Toaster />

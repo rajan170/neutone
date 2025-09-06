@@ -12,6 +12,25 @@ export async function Credits(){
 
     if (!session?.user) return null;
 
+    // Check if database is available (skip during build if DATABASE_URL is not set)
+    if (!process.env.DATABASE_URL) {
+        return (
+            <div className="group relative overflow-hidden flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-50/80 via-green-50/60 to-teal-50/80 border border-emerald-200/40 hover:border-emerald-300/60 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40 dark:border-emerald-700/40 dark:hover:border-emerald-600/60">
+                <div className="relative">
+                    <Coins className="w-4 h-4 text-emerald-600 drop-shadow-sm group-hover:text-emerald-500 transition-colors duration-300 dark:text-emerald-400" />
+                </div>
+                <div className="relative flex items-baseline gap-1">
+                    <span className="font-bold text-emerald-900 text-sm drop-shadow-sm group-hover:text-emerald-800 transition-colors duration-300 dark:text-emerald-100">
+                        N/A
+                    </span>
+                    <span className="text-emerald-700/80 text-xs font-medium group-hover:text-emerald-600/90 transition-colors duration-300 dark:text-emerald-300/80">
+                        Credits
+                    </span>
+                </div>
+            </div>
+        );
+    }
+
     const user = await db.user.findUniqueOrThrow({
         where: {id: session.user.id},
         select: {credits: true},

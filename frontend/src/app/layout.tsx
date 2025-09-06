@@ -1,8 +1,7 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Providers } from "./components/providers";
-import { Toaster } from "sonner";
+import { ClientProviders } from "./components/client-providers";
 
 export const metadata: Metadata = {
   title: "Neutone",
@@ -19,10 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>
+        <ClientProviders>
           {children}
-          <Toaster />
-        </Providers>
+        </ClientProviders>
       </body>
     </html>
   );
