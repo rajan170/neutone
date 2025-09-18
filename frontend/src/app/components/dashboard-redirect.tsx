@@ -2,15 +2,14 @@
 
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import { authClient } from "~/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function DashboardRedirect() {
+  const router = useRouter();
+  
   useEffect(() => {
-    const dashboard = async () => {
-      await authClient.customer.portal();
-    };
-    void dashboard();
-  }, []);
+    router.push("/dashboard");
+  }, [router]);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center">
