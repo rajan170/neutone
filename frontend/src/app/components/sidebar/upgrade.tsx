@@ -7,7 +7,9 @@ import { smallCreditsProductId, mediumCreditsProductId, largeCreditsProductId } 
 
 export default function Upgrade() {
     const upgrade = async () => {
-        await authClient.checkout({
+        const checkout = (authClient as { checkout?: (args: { products: string[] }) => Promise<unknown> }).checkout;
+        if (typeof checkout !== "function") return;
+        await checkout({
             products: [
                 smallCreditsProductId,
                 mediumCreditsProductId,
