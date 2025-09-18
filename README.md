@@ -113,7 +113,7 @@ Frontend server‑side env (validated in `frontend/src/env.js`):
 - `DATABASE_URL` (Postgres connection string)
 - `NODE_ENV` (development|test|production)
 - `MODAL_KEY`, `MODAL_SECRET` (Modal proxy auth forwarded to backend)
-- `AWS_ACCESS_KEY`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (S3 client from frontend server)
+- `AWS_ACCESS_KEY_`, `AWS_SECRET_ACCESS_KEY_`, `AWS_REGION` (S3 client from frontend server)
 - `S3_BUCKET_NAME`
 - `GENERATE_FROM_DESCRIPTION_ENDPOINT`
 - `GENERATE_FROM_DESCRIBED_LYRICS_ENDPOINT`
@@ -121,7 +121,7 @@ Frontend server‑side env (validated in `frontend/src/env.js`):
 - `BETTER_AUTH_SECRET` (random secret for sessions)
 - `BETTER_AUTH_URL` (e.g. `http://localhost:3000` in dev)
 
-Note: The Modal backend uses boto3 and will read cloud credentials using the standard AWS env names (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) inside Modal. You can safely set both pairs in secrets if you want a shared source.
+Note: The Modal backend uses boto3 and will read cloud credentials using the standard AWS env names (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY_`, `AWS_REGION`) inside Modal. You can safely set both pairs in secrets if you want a shared source.
 
 Example `frontend/.env`:
 
@@ -132,8 +132,8 @@ NODE_ENV=development
 BETTER_AUTH_URL=http://localhost:3000
 BETTER_AUTH_SECRET=replace-with-a-secure-random-string
 
-AWS_ACCESS_KEY=...
-AWS_SECRET_ACCESS_KEY=...
+AWS_ACCESS_KEY_=...
+AWS_SECRET_ACCESS_KEY_=...
 AWS_REGION=us-east-1
 S3_BUCKET_NAME=your-bucket
 
@@ -211,7 +211,7 @@ The code uses `modal.Secret.from_name("neutone-secrets")`. Create it and include
 modal secret create neutone-secrets \
   --env S3_BUCKET_NAME=your-bucket \
   --env AWS_ACCESS_KEY_ID=... \
-  --env AWS_SECRET_ACCESS_KEY=... \
+  --env AWS_SECRET_ACCESS_KEY_=... \
   --env AWS_REGION=us-east-1
 ```
 

@@ -4,6 +4,7 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "~/lib/auth"
 // import { AuthView } from "./view"
+import SignOutClient from "../sign-out-client"
 
 export const dynamicParams = false
 
@@ -17,6 +18,10 @@ export default async function AuthPage({ params }: { params: Promise<{ pathname:
     if (session && (pathname === "sign-in" || pathname === "sign-up")) {
         redirect("/")
     }
-    
+
+    if (pathname === "sign-out") {
+        return <SignOutClient />
+    }
+
     return <AuthView pathname={pathname} />
 }
