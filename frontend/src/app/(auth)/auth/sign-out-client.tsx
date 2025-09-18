@@ -15,7 +15,9 @@ export default function SignOutClient() {
 
     authClient
       .signOut()
-      .catch(() => {})
+      .catch((error) => {
+        console.error("Sign out failed", error);
+      })
       .finally(() => {
         router.replace("/");
         router.refresh();
