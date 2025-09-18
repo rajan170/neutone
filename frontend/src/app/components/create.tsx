@@ -5,6 +5,6 @@ import { Button } from "~/components/ui/button"
 
 export default function CreateSong() {
     return (
-    <Button onClick={() => { void generateSong()}}>Generate Song</Button>
+    <Button onClick={() => { void generateSong({})}}>Generate Song</Button>
 )
 }
