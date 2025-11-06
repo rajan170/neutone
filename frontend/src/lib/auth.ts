@@ -17,4 +17,10 @@ export const auth = betterAuth({
         },
     },
     secret: env.BETTER_AUTH_SECRET,
+    baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+    trustedOrigins: [
+        "http://localhost:3000",
+        "https://neutone-n2gr.vercel.app",
+        process.env.NEXT_PUBLIC_APP_URL,
+    ].filter(Boolean) as string[],
 });
